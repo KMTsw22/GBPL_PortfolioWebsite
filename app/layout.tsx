@@ -4,6 +4,18 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Team Portfolio',
   description: '12명의 멤버 포트폴리오, 이력서, 링크',
+  openGraph: {
+    title: 'Team Portfolio',
+    description: 'GPBL 5기 · 12명의 멤버 포트폴리오, 이력서, 링크',
+    type: 'website',
+    locale: 'ko_KR',
+    siteName: 'Team Portfolio',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Team Portfolio',
+    description: 'GPBL 5기 · 12명의 멤버 포트폴리오, 이력서, 링크',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
