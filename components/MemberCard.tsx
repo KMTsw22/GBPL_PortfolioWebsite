@@ -49,16 +49,21 @@ export function MemberCard({ member }: { member: Member }) {
         </Link>
 
         {member.tags && member.tags.length > 0 ? (
-          <div className="mt-4 flex max-h-[26px] flex-nowrap gap-1.5 overflow-hidden">
-            {member.tags.slice(0, 4).map((t) => (
-              <span
-                key={t}
-                className="inline-flex items-center rounded-full bg-black/5 px-2.5 py-1 text-[11px]"
-                style={textColor === '#ffffff' ? { background: 'rgba(255,255,255,0.15)' } : undefined}
-              >
-                {t}
-              </span>
-            ))}
+          <div
+            className="mt-4 border-t border-current/10 pt-4"
+            style={{ borderColor: textColor === '#ffffff' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }}
+          >
+            <div className="flex max-h-[26px] flex-nowrap gap-1.5 overflow-hidden">
+              {member.tags.slice(0, 4).map((t) => (
+                <span
+                  key={t}
+                  className="inline-flex items-center rounded-full bg-black/5 px-2.5 py-1 text-[11px]"
+                  style={textColor === '#ffffff' ? { background: 'rgba(255,255,255,0.15)' } : undefined}
+                >
+                  {t}
+                </span>
+              ))}
+            </div>
           </div>
         ) : null}
 
