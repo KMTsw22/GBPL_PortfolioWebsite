@@ -11,7 +11,7 @@ export function MemberCard({ member }: { member: Member }) {
 
   return (
     <div
-      className="group flex h-[420px] flex-col overflow-hidden rounded-2xl border border-line shadow-sm transition hover:-translate-y-0.5 hover:shadow-card"
+      className="group flex h-[480px] flex-col overflow-hidden rounded-2xl border border-line shadow-sm transition hover:-translate-y-0.5 hover:shadow-card"
       style={{ background: theme.bgColor || '#ffffff', color: textColor }}
     >
       {hasBanner ? (
@@ -67,7 +67,9 @@ export function MemberCard({ member }: { member: Member }) {
             className="mt-auto border-t border-current/10 pt-4"
             style={{ borderColor: textColor === '#ffffff' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }}
           >
-            <LinkButtons items={pinned.slice(0, 2)} size="sm" />
+            <div className="max-h-[64px] overflow-hidden">
+              <LinkButtons items={pinned.slice(0, 4)} size="sm" />
+            </div>
           </div>
         ) : null}
       </div>
