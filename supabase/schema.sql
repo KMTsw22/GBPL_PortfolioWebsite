@@ -13,12 +13,14 @@ create table if not exists public.members (
   bio           text,
   avatar_url    text,
   links         jsonb not null default '[]'::jsonb,   -- [{label, url, kind, pinned}]
+  theme         jsonb not null default '{}'::jsonb,   -- {bgColor, bgImage, accentColor}
   tags          text[],
   updated_at    timestamptz not null default now()
 );
 
--- 1-a) 마이그레이션: 옛 컬럼들 → links jsonb 통합
+-- 1-a) 마이그레이션: 옛 컬럼들 → links jsonb 통합 + theme 컬럼 추가
 alter table public.members add column if not exists links jsonb not null default '[]'::jsonb;
+alter table public.members add column if not exists theme jsonb not null default '{}'::jsonb;
 
 do $$
 begin

@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import { AvatarUploader } from './AvatarUploader';
 import { LinksEditor } from './LinksEditor';
+import { ThemeEditor } from './ThemeEditor';
 import { updateProfile } from '@/app/profile/actions';
-import type { Member, LinkItem } from '@/lib/types';
+import type { Member, LinkItem, CardTheme } from '@/lib/types';
 
 type Props = {
   userId: string;
@@ -18,12 +19,14 @@ export function ProfileEditor({ userId, initial }: Props) {
   const [tags, setTags] = useState((initial.tags ?? []).join(', '));
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initial.avatar_url ?? null);
   const [links, setLinks] = useState<LinkItem[]>(initial.links ?? []);
+  const [theme, setTheme] = useState<CardTheme>(initial.theme ?? {});
 
   return (
     <form action={updateProfile} className="space-y-7">
       {/* hidden bridges to server action */}
       <input type="hidden" name="avatar_url" value={avatarUrl ?? ''} />
       <input type="hidden" name="links" value={JSON.stringify(links)} />
+      <input type="hidden" name="theme" value={JSON.stringify(theme)} />
 
       <Section title="사진">
         <AvatarUploader
@@ -39,6 +42,18 @@ export function ProfileEditor({ userId, initial }: Props) {
         <Field label="역할 / 한 줄 소개" name="role" value={role} onChange={setRole} placeholder="예: Frontend Engineer" />
         <Field label="자기소개" name="bio" value={bio} onChange={setBio} textarea placeholder="간단한 소개를 적어주세요." />
         <Field label="태그 (쉼표로 구분)" name="tags" value={tags} onChange={setTags} placeholder="React, TypeScript, Design" />
+      </Section>
+
+      <Section
+        title="카드 꾸미기"
+        hint="색상과 상단 배너 이미지로 자기 카드를 꾸며보세요."
+      >
+        <ThemeEditor
+          value={theme}
+          onChange={setTheme}
+          userId={userId}
+          preview={{ name, role, avatarUrl }}
+        />
       </Section>
 
       <Section
