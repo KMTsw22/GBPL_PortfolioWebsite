@@ -41,7 +41,8 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  // 2) 인증되었지만 화이트리스트(DB)에 없는 계정 → 강제 로그아웃
+  // 2) 인증되었지만 화이트리스트(DB)에 없는 계정 → 강제 로그아웃 + 로그인으로
+  //    signOut 으로 만들어진 쿠키 삭제 지시를 redirect 응답에 보존해야 함 (안 그러면 무한 루프)
   if (user && !isPublic) {
     const ok = await isAllowed(user.email);
     if (!ok) {
@@ -50,7 +51,11 @@ export async function updateSession(request: NextRequest) {
       url.pathname = '/login';
       url.search = '';
       url.searchParams.set('error', '등록되지 않은 Google 계정입니다.');
-      return NextResponse.redirect(url);
+      const denied = NextResponse.redirect(url);
+      response.cookies.getAll().forEach((c) => {
+        denied.cookies.set(c.name, c.value, c);
+      });
+      return denied;
     }
   }
 
