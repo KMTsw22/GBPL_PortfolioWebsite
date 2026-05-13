@@ -1,33 +1,44 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import { emailFromName } from '@/lib/roster';
 
-export async function signIn(formData: FormData) {
-  const name = String(formData.get('name') ?? '').trim();
-  const password = String(formData.get('password') ?? '');
+function siteOrigin(h: Headers): string {
+  // 1) 우선순위: 명시적 환경변수
+  if (process.env.NEXT_PUBLIC_SITE_URL) {
+    return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '');
+  }
+  // 2) Vercel 자동 환경변수
+  if (process.env.VERCEL_URL) {
+    return `https://${process.env.VERCEL_URL}`;
+  }
+  // 3) 요청 헤더에서
+  const origin = h.get('origin');
+  if (origin) return origin;
+  const host = h.get('host');
+  const proto = h.get('x-forwarded-proto') ?? 'http';
+  return host ? `${proto}://${host}` : 'http://localhost:3000';
+}
+
+export async function signInWithGoogle(formData: FormData) {
   const next = String(formData.get('next') ?? '/');
-
-  if (!name || !password) {
-    return redirect(`/login?error=${encodeURIComponent('이름과 비밀번호를 입력해주세요.')}`);
-  }
-
-  const email = emailFromName(name);
-  if (!email) {
-    return redirect(`/login?error=${encodeURIComponent('등록된 이름이 아니에요. 정확히 입력했는지 확인해주세요.')}`);
-  }
+  const h = await headers();
+  const origin = siteOrigin(h);
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
+    },
+  });
 
-  if (error) {
-    return redirect(`/login?error=${encodeURIComponent('비밀번호가 맞지 않아요.')}`);
+  if (error || !data?.url) {
+    return redirect(`/login?error=${encodeURIComponent(error?.message ?? 'Google 로그인 시작 실패')}`);
   }
-
-  revalidatePath('/', 'layout');
-  redirect(next.startsWith('/') ? next : '/');
+  redirect(data.url);
 }
 
 export async function signOut() {

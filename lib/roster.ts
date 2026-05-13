@@ -1,26 +1,28 @@
-export const ADMIN_EMAIL = 'admin@team.local';
+// ============================================================
+// 멤버 이름 ↔ 이메일 매핑 (UI 표시용)
+//
+// ⚠️ "누가 사이트에 들어올 수 있는가" 는 이 파일이 아니라
+//    Supabase 의 `allowed_emails` 테이블이 결정합니다.
+//    관리자가 Dashboard → Table Editor → allowed_emails 에서 직접 관리.
+// ============================================================
+
+export const ADMIN_EMAIL = 'david.admin@gmail.com';   // ← 관리자 Google 이메일
 
 export const ROSTER: { name: string; email: string }[] = [
-  { name: '김민태', email: 'mintae@team.local' },
-  { name: '류도현', email: 'dohyeon@team.local' },
-  { name: '배준원', email: 'junwon@team.local' },
-  { name: '김영제', email: 'youngje@team.local' },
-  { name: '송영준', email: 'youngjun@team.local' },
-  { name: '이영욱', email: 'youngwook@team.local' },
-  { name: '이원준', email: 'wonjun@team.local' },
-  { name: '김찬중', email: 'chanjoong@team.local' },
-  { name: '장연승', email: 'yeonseung@team.local' },
-  { name: '백유빈', email: 'yubin@team.local' },
-  { name: '박유나', email: 'yuna@team.local' },
-  { name: '송현주', email: 'hyunju@team.local' },
+  { name: '김민태', email: 'mintae3827@kookmin.ac.kr' },
+  { name: '류도현', email: 'dohyeon@gmail.com' },
+  { name: '배준원', email: 'junwon@gmail.com' },
+  { name: '김영제', email: 'youngje@gmail.com' },
+  { name: '송영준', email: 'youngjun@gmail.com' },
+  { name: '이영욱', email: 'youngwook@gmail.com' },
+  { name: '이원준', email: 'wonjun@gmail.com' },
+  { name: '김찬중', email: 'chanjoong@gmail.com' },
+  { name: '장연승', email: 'yeonseung@gmail.com' },
+  { name: '백유빈', email: 'yubin@gmail.com' },
+  { name: '박유나', email: 'yuna@gmail.com' },
+  { name: '송현주', email: 'hyunju@gmail.com' },
   { name: 'David',  email: ADMIN_EMAIL },
 ];
-
-export function emailFromName(name: string): string | null {
-  const n = name.trim();
-  const hit = ROSTER.find((r) => r.name === n);
-  return hit?.email ?? null;
-}
 
 export function isAdminEmail(email?: string | null): boolean {
   return !!email && email.toLowerCase() === ADMIN_EMAIL.toLowerCase();

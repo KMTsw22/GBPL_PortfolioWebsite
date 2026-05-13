@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Header } from '@/components/Header';
 import { MemberCard } from '@/components/MemberCard';
 import { ADMIN_EMAIL, nameFromEmail } from '@/lib/roster';
+import { getAllowedEmails } from '@/lib/allowlist';
 import type { Member } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -10,9 +11,11 @@ export default async function HomePage() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
+  const allowed = await getAllowedEmails();
   const { data: members } = await supabase
     .from('members')
     .select('*')
+    .in('email', allowed.length > 0 ? allowed : [''])  // 빈 배열이면 PostgREST 가 에러
     .neq('email', ADMIN_EMAIL)
     .order('name', { ascending: true });
 

@@ -4,6 +4,26 @@
 -- (재실행 안전 — 이미 만든 게 있어도 에러 없이 진행됩니다)
 -- ============================================================
 
+-- 0) 화이트리스트 — 여기에 이메일이 등록된 Google 계정만 사이트에 들어올 수 있음
+--    관리자: Supabase Dashboard → Table Editor → allowed_emails 에서 추가/삭제
+create table if not exists public.allowed_emails (
+  email      text primary key,
+  note       text,                                 -- 누구인지 메모용 (선택)
+  added_at   timestamptz not null default now()
+);
+
+alter table public.allowed_emails enable row level security;
+
+-- 누구나 (anon 포함) 읽기 가능 — 미들웨어/콜백에서 화이트리스트 조회용
+drop policy if exists "allowed_emails_public_read" on public.allowed_emails;
+create policy "allowed_emails_public_read"
+  on public.allowed_emails for select
+  to anon, authenticated
+  using (true);
+
+-- 쓰기는 막음 — Service role (대시보드) 에서만 INSERT/UPDATE/DELETE
+-- (RLS 정책이 없으면 일반 인증사용자는 쓸 수 없음)
+
 -- 1) members 테이블
 create table if not exists public.members (
   id            uuid primary key references auth.users(id) on delete cascade,
@@ -111,3 +131,21 @@ select u.id, u.email, coalesce(u.raw_user_meta_data->>'name', split_part(u.email
 from auth.users u
 left join public.members m on m.id = u.id
 where m.id is null;
+
+-- 5) (선택) 화이트리스트에 13명 시드 — 이메일은 실제 Google 이메일로 바꿔서 다시 실행하세요
+--    이미 있는 이메일은 건너뜀. 실제 사용 전엔 dashboard 에서 직접 관리하는 게 편합니다.
+insert into public.allowed_emails (email, note) values
+  ('mintae3827@kookmin.ac.kr', '김민태'),
+  ('dohyeon@gmail.com',  '류도현'),
+  ('junwon@gmail.com',   '배준원'),
+  ('youngje@gmail.com',  '김영제'),
+  ('youngjun@gmail.com', '송영준'),
+  ('youngwook@gmail.com','이영욱'),
+  ('wonjun@gmail.com',   '이원준'),
+  ('chanjoong@gmail.com','김찬중'),
+  ('yeonseung@gmail.com','장연승'),
+  ('yubin@gmail.com',    '백유빈'),
+  ('yuna@gmail.com',     '박유나'),
+  ('hyunju@gmail.com',   '송현주'),
+  ('david.admin@gmail.com', 'David (관리자)')
+on conflict (email) do nothing;

@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import { NextResponse, type NextRequest } from 'next/server';
+import { isAllowed } from '@/lib/allowlist';
 
 const PUBLIC_PATHS = ['/login', '/auth'];
 
@@ -32,6 +33,7 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isPublic = PUBLIC_PATHS.some((p) => path === p || path.startsWith(`${p}/`));
 
+  // 1) 미인증 + 비공개 경로 → 로그인으로
   if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = '/login';
@@ -39,6 +41,20 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
+  // 2) 인증되었지만 화이트리스트(DB)에 없는 계정 → 강제 로그아웃
+  if (user && !isPublic) {
+    const ok = await isAllowed(user.email);
+    if (!ok) {
+      await supabase.auth.signOut();
+      const url = request.nextUrl.clone();
+      url.pathname = '/login';
+      url.search = '';
+      url.searchParams.set('error', '등록되지 않은 Google 계정입니다.');
+      return NextResponse.redirect(url);
+    }
+  }
+
+  // 3) 이미 로그인했는데 /login 으로 가려는 경우 → 홈으로
   if (user && path === '/login') {
     const url = request.nextUrl.clone();
     url.pathname = '/';

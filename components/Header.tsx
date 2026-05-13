@@ -16,9 +16,6 @@ export function Header({ name }: { name?: string | null }) {
           <Link href="/profile" className="rounded-md px-3 py-1.5 hover:bg-neutral-100 hover:text-ink">
             내 프로필
           </Link>
-          <Link href="/account" className="rounded-md px-3 py-1.5 hover:bg-neutral-100 hover:text-ink">
-            비밀번호 변경
-          </Link>
           {name ? (
             <form action={signOut}>
               <button
