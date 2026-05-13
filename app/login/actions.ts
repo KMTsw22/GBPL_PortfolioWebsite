@@ -6,20 +6,20 @@ import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
 
 function siteOrigin(h: Headers): string {
-  // 1) 우선순위: 명시적 환경변수
+  // 1) 명시적 환경변수가 있으면 최우선 (배포 환경 강제 고정용)
   if (process.env.NEXT_PUBLIC_SITE_URL) {
     return process.env.NEXT_PUBLIC_SITE_URL.replace(/\/$/, '');
   }
-  // 2) Vercel 자동 환경변수
-  if (process.env.VERCEL_URL) {
-    return `https://${process.env.VERCEL_URL}`;
-  }
-  // 3) 요청 헤더에서
+  // 2) 요청 헤더의 origin — 사용자가 실제로 보고 있는 URL 과 일치 (가장 안전)
   const origin = h.get('origin');
-  if (origin) return origin;
+  if (origin) return origin.replace(/\/$/, '');
+  // 3) host + proto 조합
   const host = h.get('host');
-  const proto = h.get('x-forwarded-proto') ?? 'http';
-  return host ? `${proto}://${host}` : 'http://localhost:3000';
+  const proto = h.get('x-forwarded-proto') ?? 'https';
+  if (host) return `${proto}://${host}`;
+  // 4) VERCEL_URL — deployment-specific URL 이라 prod 도메인과 다를 수 있어 마지막 fallback
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return 'http://localhost:3000';
 }
 
 export async function signInWithGoogle(formData: FormData) {
