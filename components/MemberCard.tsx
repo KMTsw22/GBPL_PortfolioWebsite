@@ -49,7 +49,7 @@ export function MemberCard({ member }: { member: Member }) {
         </Link>
 
         {member.tags && member.tags.length > 0 ? (
-          <div className="mt-4 flex max-h-[64px] flex-wrap gap-1.5 overflow-hidden">
+          <div className="mt-4 flex max-h-[26px] flex-nowrap gap-1.5 overflow-hidden">
             {member.tags.slice(0, 4).map((t) => (
               <span
                 key={t}
