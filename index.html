@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Team Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="brand">
+        <span class="brand-mark"></span>
+        <span class="brand-name">Team Portfolio</span>
+      </div>
+      <nav class="nav">
+        <a href="#members">Members</a>
+        <a href="#about">About</a>
+      </nav>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">2026 Cohort</p>
+      <h1>우리들의 포트폴리오</h1>
+      <p class="lead">12명의 멤버가 함께 만들어가는 작업물과 소개를 한 곳에서 만나보세요.</p>
+    </div>
+  </section>
+
+  <main id="members" class="members">
+    <div class="container">
+      <div class="section-head">
+        <h2>Members</h2>
+        <p>각 카드를 클릭하면 자세한 소개를 볼 수 있어요.</p>
+      </div>
+      <div id="grid" class="grid" aria-live="polite"></div>
+    </div>
+  </main>
+
+  <section id="about" class="about">
+    <div class="container">
+      <h2>About</h2>
+      <p>
+        이 페이지는 우리 12인 팀의 작업과 이력을 공유하기 위해 만들어졌습니다.
+        각 멤버의 카드를 통해 포트폴리오, 이력서, 그리고 외부 링크로 이동할 수 있습니다.
+      </p>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <span>© <span id="year"></span> Team Portfolio</span>
+      <span class="muted">Made with care.</span>
+    </div>
+  </footer>
+
+  <div id="modal" class="modal" aria-hidden="true" role="dialog" aria-modal="true">
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-panel" role="document">
+      <button class="modal-close" data-close aria-label="Close">×</button>
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <script src="data/people.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
