@@ -13,7 +13,8 @@ export type IconId =
   | 'youtube'
   | 'instagram'
   | 'behance'
-  | 'figma';
+  | 'figma'
+  | 'kookmin';
 
 export const ICON_OPTIONS: { id: IconId; label: string }[] = [
   { id: 'auto', label: '자동' },
@@ -29,7 +30,13 @@ export const ICON_OPTIONS: { id: IconId; label: string }[] = [
   { id: 'instagram', label: 'Instagram' },
   { id: 'behance', label: 'Behance' },
   { id: 'figma', label: 'Figma' },
+  { id: 'kookmin', label: '국민대' },
 ];
+
+// Favicon URL for icons that use Google's s2 favicon service
+const FAVICON_DOMAINS: Partial<Record<IconId, string>> = {
+  kookmin: 'kookmin.ac.kr',
+};
 
 function detect(it: LinkItem): IconId {
   const u = (it.url ?? '').toLowerCase();
@@ -46,6 +53,7 @@ function detect(it: LinkItem): IconId {
   if (u.includes('instagram.com')) return 'instagram';
   if (u.includes('behance.net')) return 'behance';
   if (u.includes('figma.com')) return 'figma';
+  if (u.includes('kookmin.ac.kr')) return 'kookmin';
   return 'link';
 }
 
@@ -71,6 +79,21 @@ export function LinkIcon({
 
 function Glyph({ id, className }: GlyphProps) {
   const cls = className ?? 'h-3.5 w-3.5';
+
+  // favicon 기반 아이콘 — Google s2 favicon 서비스로 도메인의 favicon 을 받아옴
+  const faviconDomain = FAVICON_DOMAINS[id];
+  if (faviconDomain) {
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={`https://www.google.com/s2/favicons?domain=${faviconDomain}&sz=64`}
+        alt=""
+        className={`${cls} rounded-sm object-contain`}
+        aria-hidden
+      />
+    );
+  }
+
   switch (id) {
     case 'auto':
       // 자동 모드는 detect 후 다른 case 로 넘어가지만, 직접 표시될 때(편집기에서 'auto' 선택지) 일반 링크 아이콘으로 그림
