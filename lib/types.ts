@@ -5,6 +5,7 @@ export type LinkItem = {
   url: string;
   kind: LinkKind;
   pinned?: boolean;
+  icon?: string;   // 비어있으면 'auto' — URL 도메인 기반 자동 감지
 };
 
 export type CardTheme = {

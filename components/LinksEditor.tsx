@@ -1,8 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { FileUploader } from './FileUploader';
 import type { LinkItem } from '@/lib/types';
+import { ICON_OPTIONS, LinkIcon, type IconId } from '@/lib/linkIcons';
 
 type Props = {
   items: LinkItem[];
@@ -15,6 +16,7 @@ const PRESET_LABELS = ['LinkedIn', 'GitHub', 'Portfolio', 'Behance', 'Notion', '
 export function LinksEditor({ items, onChange, userId }: Props) {
   const [draftLabel, setDraftLabel] = useState('');
   const [draftUrl, setDraftUrl] = useState('');
+  const [draftIcon, setDraftIcon] = useState<IconId>('auto');
 
   function update(idx: number, patch: Partial<LinkItem>) {
     onChange(items.map((it, i) => (i === idx ? { ...it, ...patch } : it)));
@@ -33,12 +35,13 @@ export function LinksEditor({ items, onChange, userId }: Props) {
     const label = draftLabel.trim();
     const url = draftUrl.trim();
     if (!label || !url) return;
-    onChange([...items, { label, url, kind: 'link', pinned: true }]);
+    onChange([...items, { label, url, kind: 'link', pinned: true, icon: draftIcon }]);
     setDraftLabel('');
     setDraftUrl('');
+    setDraftIcon('auto');
   }
   function addFile(u: { url: string; name: string }) {
-    onChange([...items, { label: u.name, url: u.url, kind: 'file', pinned: true }]);
+    onChange([...items, { label: u.name, url: u.url, kind: 'file', pinned: true, icon: 'auto' }]);
   }
 
   return (
@@ -51,12 +54,11 @@ export function LinksEditor({ items, onChange, userId }: Props) {
               key={idx}
               className="flex flex-col gap-2 rounded-xl border border-line bg-white p-3 sm:flex-row sm:items-center"
             >
-              <div className="flex shrink-0 items-center gap-2 text-ink-muted">
-                <KindIcon kind={it.kind} />
-                <span className="text-[10px] font-medium uppercase tracking-wider">
-                  {it.kind === 'file' ? '파일' : '링크'}
-                </span>
-              </div>
+              <IconPicker
+                item={it}
+                value={(it.icon as IconId) ?? 'auto'}
+                onSelect={(id) => update(idx, { icon: id })}
+              />
 
               <input
                 value={it.label}
@@ -97,7 +99,12 @@ export function LinksEditor({ items, onChange, userId }: Props) {
       {/* 링크 추가 */}
       <div className="rounded-xl border border-line bg-white p-4">
         <p className="mb-3 text-xs font-medium uppercase tracking-wider text-ink-muted">+ 링크 추가</p>
-        <div className="flex flex-col gap-2 sm:flex-row">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+          <IconPicker
+            item={{ label: '', url: draftUrl, kind: 'link', icon: draftIcon }}
+            value={draftIcon}
+            onSelect={setDraftIcon}
+          />
           <input
             value={draftLabel}
             onChange={(e) => setDraftLabel(e.target.value)}
@@ -118,6 +125,9 @@ export function LinksEditor({ items, onChange, userId }: Props) {
             추가
           </button>
         </div>
+        <p className="mt-2 text-[11px] text-ink-muted">
+          아이콘은 "자동"이 기본 — URL 도메인을 보고 알아서 골라줘요. 원하면 직접 선택.
+        </p>
       </div>
 
       {/* 파일 업로드 */}
@@ -169,19 +179,59 @@ function IconBtn({
   );
 }
 
-function KindIcon({ kind }: { kind: 'link' | 'file' }) {
-  if (kind === 'file') {
-    return (
-      <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
-        <path d="M14 3H7C5.89543 3 5 3.89543 5 5V19C5 20.1046 5.89543 21 7 21H17C18.1046 21 19 20.1046 19 19V8L14 3Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-        <path d="M14 3V8H19" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round"/>
-      </svg>
-    );
-  }
+function IconPicker({
+  item,
+  value,
+  onSelect,
+}: {
+  item: LinkItem;
+  value: IconId;
+  onSelect: (id: IconId) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDown(e: MouseEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [open]);
+
   return (
-    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none">
-      <path d="M10 14C10.5 14.6667 11.5 15 12.5 15C13.5 15 14.5 14.6667 15 14L19 10C20.1046 8.89543 20.1046 7.10457 19 6C17.8954 4.89543 16.1046 4.89543 15 6L14 7" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-      <path d="M14 10C13.5 9.33333 12.5 9 11.5 9C10.5 9 9.5 9.33333 9 10L5 14C3.89543 15.1046 3.89543 16.8954 5 18C6.10457 19.1046 7.89543 19.1046 9 18L10 17" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
+    <div ref={ref} className="relative shrink-0">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        title="아이콘 선택"
+        aria-label="아이콘 선택"
+        className="grid h-10 w-10 place-items-center rounded-md border border-line bg-white text-ink hover:bg-neutral-50"
+      >
+        <LinkIcon item={item} className="h-4 w-4" />
+      </button>
+      {open ? (
+        <div className="absolute left-0 top-full z-30 mt-1.5 w-[260px] rounded-lg border border-line bg-white p-2 shadow-card">
+          <p className="px-1 pb-1.5 text-[10px] font-medium uppercase tracking-wider text-ink-muted">아이콘</p>
+          <div className="grid grid-cols-6 gap-1">
+            {ICON_OPTIONS.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                onClick={() => { onSelect(opt.id); setOpen(false); }}
+                title={opt.label}
+                aria-label={opt.label}
+                className={`group grid h-9 w-9 place-items-center rounded-md transition hover:bg-neutral-100 ${
+                  value === opt.id ? 'bg-neutral-100 ring-1 ring-ink' : ''
+                }`}
+              >
+                <LinkIcon iconId={opt.id} className="h-4 w-4" />
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }

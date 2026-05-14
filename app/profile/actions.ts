@@ -27,7 +27,9 @@ function parseLinks(raw: FormDataEntryValue | null): LinkItem[] {
           ? String(it.url ?? '').trim()
           : normalizeUrl(String(it.url ?? ''));
         const pinned = it.pinned === true;
-        return { label, url, kind, pinned };
+        const iconRaw = String(it.icon ?? '').trim();
+        const icon = iconRaw || undefined;
+        return { label, url, kind, pinned, icon };
       })
       .filter((it) => it.label && it.url);
   } catch {
