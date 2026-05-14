@@ -4,6 +4,11 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'Team Portfolio',
   description: '12명의 멤버 포트폴리오, 이력서, 링크',
+  icons: {
+    icon: [{ url: '/kookmin-icon.webp', type: 'image/webp' }],
+    shortcut: '/kookmin-icon.webp',
+    apple: '/kookmin-icon.webp',
+  },
   openGraph: {
     title: 'Team Portfolio',
     description: 'GPBL 5기 · 12명의 멤버 포트폴리오, 이력서, 링크',
