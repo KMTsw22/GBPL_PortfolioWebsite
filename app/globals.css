@@ -29,6 +29,6 @@
     @apply mb-1.5 block text-xs font-medium uppercase tracking-wider text-ink-muted;
   }
   .tag {
-    @apply inline-flex items-center rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] text-ink-soft;
+    @apply inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-neutral-100 px-2.5 py-1 text-[11px] text-ink-soft;
   }
 }

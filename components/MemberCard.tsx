@@ -11,20 +11,25 @@ export function MemberCard({ member }: { member: Member }) {
 
   return (
     <div
-      className="group flex h-[430px] flex-col overflow-hidden rounded-2xl border border-line shadow-sm transition hover:-translate-y-0.5 hover:shadow-card"
+      className="group relative flex h-[430px] flex-col overflow-hidden rounded-2xl border border-line shadow-sm transition hover:-translate-y-0.5 hover:shadow-card focus-within:ring-2 focus-within:ring-accent"
       style={{ background: theme.bgColor || '#ffffff', color: textColor }}
     >
+      {/* 카드 전체 클릭 영역 — 절대 위치 오버레이. 내부 <a> 와 충돌 안 함 */}
+      <Link
+        href={`/members/${member.id}`}
+        aria-label={member.name}
+        className="absolute inset-0 z-10 focus:outline-none"
+      />
+
       {hasBanner ? (
-        <Link
-          href={`/members/${member.id}`}
-          className="block h-20 flex-none bg-cover bg-center"
+        <div
+          className="h-20 flex-none bg-cover bg-center"
           style={{ backgroundImage: `url(${theme.bgImage})` }}
-          aria-label={member.name}
         />
       ) : null}
 
       <div className="flex min-h-0 flex-1 flex-col p-6">
-        <Link href={`/members/${member.id}`} className="block">
+        <div>
           {theme.accentColor ? (
             <div
               className="mb-3 h-1 w-10 rounded-full"
@@ -46,7 +51,7 @@ export function MemberCard({ member }: { member: Member }) {
           {member.bio ? (
             <p className="mt-3 line-clamp-2 text-sm opacity-80">{member.bio}</p>
           ) : null}
-        </Link>
+        </div>
 
         <div className="mt-auto">
           {member.tags && member.tags.length > 0 ? (
@@ -58,7 +63,7 @@ export function MemberCard({ member }: { member: Member }) {
                 {member.tags.slice(0, 4).map((t) => (
                   <span
                     key={t}
-                    className="inline-flex items-center rounded-full bg-black/5 px-2.5 py-1 text-[11px]"
+                    className="inline-flex shrink-0 items-center whitespace-nowrap rounded-full bg-black/5 px-2.5 py-1 text-[11px]"
                     style={textColor === '#ffffff' ? { background: 'rgba(255,255,255,0.15)' } : undefined}
                   >
                     {t}
@@ -70,7 +75,7 @@ export function MemberCard({ member }: { member: Member }) {
 
           {pinned.length > 0 ? (
             <div
-              className="mt-4 border-t border-current/10 pt-4"
+              className="relative z-20 mt-4 border-t border-current/10 pt-4"
               style={{ borderColor: textColor === '#ffffff' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.08)' }}
             >
               <div className="max-h-[64px] overflow-hidden">

@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import type { LinkItem, LinkKind, CardTheme } from '@/lib/types';
+import { normalizeUrl, type LinkItem, type LinkKind, type CardTheme } from '@/lib/types';
 
 function clean(value: FormDataEntryValue | null): string | null {
   const v = String(value ?? '').trim();
@@ -20,9 +20,12 @@ function parseLinks(raw: FormDataEntryValue | null): LinkItem[] {
       .filter((it): it is Record<string, unknown> => typeof it === 'object' && it !== null)
       .map((it) => {
         const label = String(it.label ?? '').trim();
-        const url = String(it.url ?? '').trim();
         const kindRaw = String(it.kind ?? 'link').trim();
         const kind: LinkKind = kindRaw === 'file' ? 'file' : 'link';
+        // 파일은 우리 storage 가 만든 절대 URL 이라 그대로, 일반 링크는 정규화
+        const url = kind === 'file'
+          ? String(it.url ?? '').trim()
+          : normalizeUrl(String(it.url ?? ''));
         const pinned = it.pinned === true;
         return { label, url, kind, pinned };
       })

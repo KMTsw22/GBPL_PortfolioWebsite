@@ -1,4 +1,4 @@
-import type { LinkItem } from '@/lib/types';
+import { normalizeUrl, type LinkItem } from '@/lib/types';
 
 type Props = {
   items: LinkItem[];
@@ -27,12 +27,14 @@ export function LinkButtons({ items, size = 'md' }: Props) {
     <div className="flex flex-wrap gap-2">
       {items.map((it, i) => {
         const isFile = it.kind === 'file';
+        const href = normalizeUrl(it.url);
+        if (!href) return null;
         const baseClass = `inline-flex items-center rounded-lg border border-line bg-white font-medium text-ink transition hover:-translate-y-0.5 hover:border-neutral-300 hover:bg-neutral-50 ${cls}`;
         return isFile ? (
           <a
-            key={`${it.url}-${i}`}
-            href={it.url}
-            download={fileNameFromUrl(it.url)}
+            key={`${href}-${i}`}
+            href={href}
+            download={fileNameFromUrl(href)}
             target="_blank"
             rel="noopener noreferrer"
             className={baseClass}
@@ -43,8 +45,8 @@ export function LinkButtons({ items, size = 'md' }: Props) {
           </a>
         ) : (
           <a
-            key={`${it.url}-${i}`}
-            href={it.url}
+            key={`${href}-${i}`}
+            href={href}
             target="_blank"
             rel="noopener noreferrer"
             className={baseClass}

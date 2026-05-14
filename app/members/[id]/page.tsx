@@ -56,7 +56,7 @@ export default async function MemberPage({ params }: Props) {
           {m.tags && m.tags.length > 0 ? (
             <section className="mt-8">
               <h2 className="label">Tags</h2>
-              <div className="flex flex-wrap gap-1.5">
+              <div className="-mx-2 flex gap-1.5 overflow-x-auto px-2 pb-2">
                 {m.tags.map((t) => <span key={t} className="tag">{t}</span>)}
               </div>
             </section>
