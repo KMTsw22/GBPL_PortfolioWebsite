@@ -27,12 +27,18 @@ export function ThemeEditor({ value, onChange, userId, preview }: Props) {
         <div>
           <label className="label">카드 배경색</label>
           <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={value.bgColor ?? '#ffffff'}
-              onChange={(e) => set({ bgColor: e.target.value })}
-              className="h-10 w-14 cursor-pointer rounded border border-line"
-            />
+            <label
+              className="relative h-12 w-20 cursor-pointer rounded-lg border-2 border-line shadow-sm transition hover:scale-105 hover:border-ink-soft"
+              style={{ background: value.bgColor || '#ffffff' }}
+              title="클릭해서 색 고르기"
+            >
+              <input
+                type="color"
+                value={value.bgColor ?? '#ffffff'}
+                onChange={(e) => set({ bgColor: e.target.value })}
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              />
+            </label>
             <input
               type="text"
               value={value.bgColor ?? ''}
@@ -62,12 +68,18 @@ export function ThemeEditor({ value, onChange, userId, preview }: Props) {
         <div>
           <label className="label">강조색 (이름 위 라인)</label>
           <div className="flex items-center gap-2">
-            <input
-              type="color"
-              value={value.accentColor ?? '#2f5fff'}
-              onChange={(e) => set({ accentColor: e.target.value })}
-              className="h-10 w-14 cursor-pointer rounded border border-line"
-            />
+            <label
+              className="relative h-12 w-20 cursor-pointer rounded-lg border-2 border-line shadow-sm transition hover:scale-105 hover:border-ink-soft"
+              style={{ background: value.accentColor || '#2f5fff' }}
+              title="클릭해서 색 고르기"
+            >
+              <input
+                type="color"
+                value={value.accentColor ?? '#2f5fff'}
+                onChange={(e) => set({ accentColor: e.target.value })}
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              />
+            </label>
             <input
               type="text"
               value={value.accentColor ?? ''}
