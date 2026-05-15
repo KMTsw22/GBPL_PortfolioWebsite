@@ -157,15 +157,23 @@ where m.id is null;
 create table if not exists public.gallery_posts (
   id         uuid primary key default gen_random_uuid(),
   author_id  uuid not null references auth.users(id) on delete cascade,
-  image_url  text not null,
+  image_url  text not null,                -- (구) 단일 이미지 — 호환용. 새 게시물은 image_urls[0] 가 동일 값.
+  image_urls text[] not null default '{}', -- 여러 장 첨부 (1장 이상)
   caption    text,
-  event_date date,                          -- 사진 속 일이 있었던 날 (선택)
+  event_date date,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 -- 컬럼 추가는 안전 (없을 때만 추가)
 alter table public.gallery_posts add column if not exists event_date date;
+alter table public.gallery_posts add column if not exists image_urls text[] not null default '{}';
+
+-- 옛 단일 image_url 만 있던 행은 배열에도 같은 값을 넣어줌 (덮어쓰지 않음 — 비어있을 때만)
+update public.gallery_posts
+   set image_urls = array[image_url]
+ where (image_urls is null or array_length(image_urls, 1) is null)
+   and image_url is not null;
 
 create index if not exists gallery_posts_created_at_idx
   on public.gallery_posts (created_at desc);

@@ -4,11 +4,6 @@ import './globals.css';
 export const metadata: Metadata = {
   title: 'GPBL-5th',
   description: '12명의 멤버 포트폴리오, 이력서, 링크',
-  icons: {
-    icon: [{ url: '/gpbl-logo.png', type: 'image/png' }],
-    shortcut: '/gpbl-logo.png',
-    apple: '/gpbl-logo.png',
-  },
   openGraph: {
     title: 'GPBL-5th',
     description: 'GPBL 5기 · 12명의 멤버 포트폴리오, 이력서, 링크',

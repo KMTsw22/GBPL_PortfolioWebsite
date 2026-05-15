@@ -23,8 +23,8 @@ type Props = {
   currentUserId: string | null;
 };
 
-// 하루 그리드 1픽셀 당 분 수
-const PX_PER_MIN = 0.9;     // → 1시간 = 54px
+// 하루 그리드 1픽셀 당 분 수 — 너무 길면 페이지 스크롤이 생기니까 살짝 컴팩트하게
+const PX_PER_MIN = 0.72;    // → 1시간 ≈ 43px (13시간 ≈ 561px)
 const dayHeight = (CAL_DAY_END_MIN - CAL_DAY_START_MIN) * PX_PER_MIN;
 
 type AnyEvent =
@@ -75,11 +75,11 @@ export function CalendarView({ weekStartISO, weeklyClasses, events, currentUserI
         </div>
       </div>
 
-      {/* Grid */}
-      <div className="overflow-x-auto rounded-2xl border border-line bg-white shadow-sm">
-        <div className="min-w-[760px]">
+      {/* Grid — 가로 스크롤 없이 화면폭에 맞춰 7열이 같이 줄어듦 */}
+      <div className="rounded-2xl border-2 border-neutral-300 bg-white shadow-card">
+        <div>
           {/* Header row: 요일 + 날짜 */}
-          <div className="grid grid-cols-[56px_repeat(7,1fr)] border-b border-line bg-neutral-50">
+          <div className="grid grid-cols-[48px_repeat(7,minmax(0,1fr))] border-b-2 border-neutral-300 bg-neutral-100">
             <div />
             {days.map((d, i) => {
               const isToday = d.getTime() === today.getTime();
@@ -104,9 +104,9 @@ export function CalendarView({ weekStartISO, weeklyClasses, events, currentUserI
           </div>
 
           {/* Body: 시간축 + 7일 컬럼 */}
-          <div className="relative grid grid-cols-[56px_repeat(7,1fr)]">
+          <div className="relative grid grid-cols-[48px_repeat(7,minmax(0,1fr))]">
             {/* 시간 축 */}
-            <div className="relative border-r border-line" style={{ height: dayHeight }}>
+            <div className="relative border-r border-neutral-300 bg-neutral-50" style={{ height: dayHeight }}>
               {hourMarks.map((m) => (
                 <div
                   key={m}
@@ -126,14 +126,14 @@ export function CalendarView({ weekStartISO, weeklyClasses, events, currentUserI
               return (
                 <div
                   key={dayIdx}
-                  className="relative border-r border-line last:border-r-0"
+                  className="relative border-r border-neutral-200 last:border-r-0"
                   style={{ height: dayHeight }}
                 >
                   {/* 시간 가로선 */}
                   {hourMarks.map((m) => (
                     <div
                       key={m}
-                      className="pointer-events-none absolute inset-x-0 border-t border-dashed border-line/70"
+                      className="pointer-events-none absolute inset-x-0 border-t border-neutral-200"
                       style={{ top: (m - CAL_DAY_START_MIN) * PX_PER_MIN }}
                     />
                   ))}
@@ -147,12 +147,12 @@ export function CalendarView({ weekStartISO, weeklyClasses, events, currentUserI
                         key={c.id}
                         type="button"
                         onClick={() => setSelected({ kind: 'fixed', data: c })}
-                        className="absolute inset-x-1 overflow-hidden rounded-md border border-amber-300/70 bg-amber-200/80 px-1.5 py-1 text-left text-[11px] font-medium text-amber-900 shadow-sm transition hover:bg-amber-200"
+                        className="absolute inset-x-1 overflow-hidden rounded-md border-l-4 border-amber-600 bg-amber-400 px-1.5 py-1 text-left text-[11px] font-semibold text-amber-950 shadow-sm ring-1 ring-amber-500/40 transition hover:bg-amber-500"
                         style={{ top, height: Math.max(height, 18), backgroundColor: c.color ?? undefined }}
                         title={`${c.title} · ${formatHM(c.start_minutes)}–${formatHM(c.end_minutes)} (고정)`}
                       >
-                        <span className="block truncate">{c.title}</span>
-                        <span className="block truncate text-[10px] opacity-80">
+                        <span className="block truncate leading-tight">{c.title}</span>
+                        <span className="block truncate text-[10px] font-medium opacity-80">
                           {formatHM(c.start_minutes)}–{formatHM(c.end_minutes)}
                         </span>
                       </button>
@@ -167,11 +167,11 @@ export function CalendarView({ weekStartISO, weeklyClasses, events, currentUserI
                           key={e.id}
                           type="button"
                           onClick={() => setSelected({ kind: 'added', data: e })}
-                          className="absolute inset-x-1 top-1 overflow-hidden rounded-md border border-indigo-300/70 bg-indigo-100 px-1.5 py-0.5 text-left text-[11px] font-medium text-indigo-900 shadow-sm hover:bg-indigo-200"
+                          className="absolute inset-x-1 top-1 overflow-hidden rounded-md border-l-4 border-indigo-700 bg-indigo-500 px-1.5 py-0.5 text-left text-[11px] font-semibold text-white shadow-sm ring-1 ring-indigo-600/50 hover:bg-indigo-600"
                           style={{ backgroundColor: e.color ?? undefined }}
                           title={`${e.title} (종일)`}
                         >
-                          <span className="block truncate">{e.title}</span>
+                          <span className="block truncate leading-tight">{e.title}</span>
                         </button>
                       );
                     }
@@ -185,12 +185,12 @@ export function CalendarView({ weekStartISO, weeklyClasses, events, currentUserI
                         key={e.id}
                         type="button"
                         onClick={() => setSelected({ kind: 'added', data: e })}
-                        className="absolute inset-x-1 overflow-hidden rounded-md border border-indigo-300/70 bg-indigo-100 px-1.5 py-1 text-left text-[11px] font-medium text-indigo-900 shadow-sm hover:bg-indigo-200"
+                        className="absolute inset-x-1 overflow-hidden rounded-md border-l-4 border-indigo-700 bg-indigo-500 px-1.5 py-1 text-left text-[11px] font-semibold text-white shadow-sm ring-1 ring-indigo-600/50 hover:bg-indigo-600"
                         style={{ top, height: Math.max(height, 18), backgroundColor: e.color ?? undefined }}
                         title={`${e.title} · ${formatHM(sm)}–${formatHM(em)}`}
                       >
-                        <span className="block truncate">{e.title}</span>
-                        <span className="block truncate text-[10px] opacity-80">
+                        <span className="block truncate leading-tight">{e.title}</span>
+                        <span className="block truncate text-[10px] font-medium opacity-90">
                           {formatHM(sm)}–{formatHM(em)}
                         </span>
                       </button>
@@ -206,11 +206,11 @@ export function CalendarView({ weekStartISO, weeklyClasses, events, currentUserI
       {/* 범례 */}
       <div className="flex flex-wrap items-center gap-3 text-[11px] text-ink-muted">
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm border border-amber-300/70 bg-amber-200/80" />
+          <span className="h-3 w-3 rounded-sm border-l-4 border-amber-600 bg-amber-400" />
           매주 고정 수업
         </span>
         <span className="inline-flex items-center gap-1.5">
-          <span className="h-3 w-3 rounded-sm border border-indigo-300/70 bg-indigo-100" />
+          <span className="h-3 w-3 rounded-sm border-l-4 border-indigo-700 bg-indigo-500" />
           추가된 일정
         </span>
       </div>

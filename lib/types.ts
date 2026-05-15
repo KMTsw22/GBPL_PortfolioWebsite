@@ -31,7 +31,8 @@ export type Member = {
 export type GalleryPost = {
   id: string;
   author_id: string;
-  image_url: string;
+  image_url: string;            // (구) 단일 — 호환용. UI 에선 image_urls 우선.
+  image_urls: string[];         // 여러 장 (1장 이상)
   caption: string | null;
   event_date: string | null;    // YYYY-MM-DD — 사진 속 일이 있었던 날 (선택)
   created_at: string;
@@ -42,6 +43,12 @@ export type GalleryPost = {
   author_avatar?: string | null;
   comments?: GalleryComment[];
 };
+
+// 게시물에서 실제로 보여줄 이미지 배열 — image_urls 비어있으면 image_url 로 폴백
+export function postImages(p: Pick<GalleryPost, 'image_url' | 'image_urls'>): string[] {
+  if (p.image_urls && p.image_urls.length > 0) return p.image_urls;
+  return p.image_url ? [p.image_url] : [];
+}
 
 export type GalleryComment = {
   id: string;

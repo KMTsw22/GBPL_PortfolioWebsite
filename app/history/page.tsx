@@ -11,63 +11,55 @@ type Props = {
   searchParams: Promise<{ error?: string }>;
 };
 
+// event_date 가 있으면 그 날짜, 없으면 created_at 으로 정렬 키 산출
+function sortKey(p: GalleryPost): string {
+  return p.event_date ?? p.created_at;
+}
+
 export default async function HistoryPage({ searchParams }: Props) {
   const { error } = await searchParams;
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
 
-  // 게시물 + 댓글 + 작성자 멤버 정보 가져오기 (병렬)
+  // 게시물 + 댓글 + 작성자 멤버 정보 병렬 fetch
   const [postsRes, commentsRes, membersRes] = await Promise.all([
-    supabase
-      .from('gallery_posts')
-      .select('*')
-      .order('created_at', { ascending: false }),
-    supabase
-      .from('gallery_comments')
-      .select('*')
-      .order('created_at', { ascending: true }),
-    supabase
-      .from('members')
-      .select('id, email, name, avatar_url'),
+    supabase.from('gallery_posts').select('*'),
+    supabase.from('gallery_comments').select('*'),
+    supabase.from('members').select('id, email, name, avatar_url'),
   ]);
 
   const rawPosts = (postsRes.data ?? []) as GalleryPost[];
   const rawComments = (commentsRes.data ?? []) as GalleryComment[];
   const members = (membersRes.data ?? []) as Pick<Member, 'id' | 'email' | 'name' | 'avatar_url'>[];
-
   const memberById = new Map(members.map((m) => [m.id, m]));
 
   // 댓글을 post_id 별로 묶기
   const commentsByPost = new Map<string, GalleryComment[]>();
   for (const c of rawComments) {
-    const m = memberById.get(c.author_id);
-    const enriched: GalleryComment = {
-      ...c,
-      author_email: m?.email,
-      author_name: m?.name ?? nameFromEmail(m?.email),
-    };
     if (!commentsByPost.has(c.post_id)) commentsByPost.set(c.post_id, []);
-    commentsByPost.get(c.post_id)!.push(enriched);
+    commentsByPost.get(c.post_id)!.push(c);
   }
 
-  // 게시물에 작성자 정보 + 댓글 붙이기
-  const posts: GalleryPost[] = rawPosts.map((p) => {
-    const m = memberById.get(p.author_id);
-    return {
-      ...p,
-      author_email: m?.email,
-      author_name: m?.name ?? nameFromEmail(m?.email),
-      author_avatar: m?.avatar_url ?? null,
-      comments: commentsByPost.get(p.id) ?? [],
-    };
-  });
+  // 작성자 정보 + 댓글 붙이고, event_date(없으면 created_at) 기준 최신순 정렬
+  const posts: GalleryPost[] = rawPosts
+    .map((p) => {
+      const m = memberById.get(p.author_id);
+      return {
+        ...p,
+        author_email: m?.email,
+        author_name: m?.name ?? nameFromEmail(m?.email),
+        author_avatar: m?.avatar_url ?? null,
+        comments: commentsByPost.get(p.id) ?? [],
+      };
+    })
+    .sort((a, b) => sortKey(b).localeCompare(sortKey(a)));
 
   return (
     <>
       <Header name={nameFromEmail(user?.email)} />
 
       <main className="container-page py-12">
-        <div className="mb-6 flex items-end justify-between">
+        <div className="mb-6 flex items-end justify-between gap-4">
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">History</h1>
             <p className="mt-1 text-sm text-ink-muted">
@@ -99,12 +91,10 @@ export default async function HistoryPage({ searchParams }: Props) {
             {user ? ' 위 "+ 사진 올리기" 로 첫 사진을 남겨보세요.' : ''}
           </div>
         ) : (
-          // 메이슨리 그리드 — 사진 비율 유지하면서 자연스럽게 채워짐
-          <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4">
+          // 2열 그리드 — 고정 가로 비율 카드 (4:3) 로 일관된 모양
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
             {posts.map((p) => (
-              <div key={p.id} className="mb-5 break-inside-avoid">
-                <HistoryPostCard post={p} currentUserId={user?.id ?? null} />
-              </div>
+              <HistoryPostCard key={p.id} post={p} />
             ))}
           </div>
         )}

@@ -17,21 +17,37 @@ function cleanDate(value: FormDataEntryValue | null): string | null {
   return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null;
 }
 
+// "image_urls" form 필드에서 JSON 배열을 파싱 (storage public URL 만 통과)
+function parseImageUrls(value: FormDataEntryValue | null): string[] {
+  const s = String(value ?? '').trim();
+  if (!s) return [];
+  try {
+    const parsed = JSON.parse(s);
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .map((u) => String(u ?? '').trim())
+      .filter((u) => /^https?:\/\//i.test(u));
+  } catch {
+    return [];
+  }
+}
+
 export async function createGalleryPost(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return redirect('/login?next=/history');
 
-  const image_url = String(formData.get('image_url') ?? '').trim();
-  if (!image_url) {
-    return redirect('/history?error=' + encodeURIComponent('이미지를 먼저 업로드해주세요.'));
+  const image_urls = parseImageUrls(formData.get('image_urls'));
+  if (image_urls.length === 0) {
+    return redirect('/history?error=' + encodeURIComponent('이미지를 1장 이상 업로드해주세요.'));
   }
   const caption = clean(formData.get('caption'));
   const event_date = cleanDate(formData.get('event_date'));
 
   const { error } = await supabase.from('gallery_posts').insert({
     author_id: user.id,
-    image_url,
+    image_url: image_urls[0],   // 호환 컬럼 — 첫 번째 사진
+    image_urls,
     caption,
     event_date,
   });
@@ -53,10 +69,29 @@ export async function updateGalleryPost(formData: FormData) {
 
   const caption = clean(formData.get('caption'));
   const event_date = cleanDate(formData.get('event_date'));
+  const image_urls = parseImageUrls(formData.get('image_urls'));
+
+  // image_urls 가 제출됐고 1장 이상이면 사진 목록도 갱신, 아니면 사진은 그대로 두고 caption/date 만 갱신
+  type Patch = {
+    caption: string | null;
+    event_date: string | null;
+    updated_at: string;
+    image_url?: string;
+    image_urls?: string[];
+  };
+  const patch: Patch = {
+    caption,
+    event_date,
+    updated_at: new Date().toISOString(),
+  };
+  if (image_urls.length > 0) {
+    patch.image_url = image_urls[0];
+    patch.image_urls = image_urls;
+  }
 
   const { error } = await supabase
     .from('gallery_posts')
-    .update({ caption, event_date, updated_at: new Date().toISOString() })
+    .update(patch)
     .eq('id', id)
     .eq('author_id', user.id);
 
@@ -65,7 +100,8 @@ export async function updateGalleryPost(formData: FormData) {
   }
 
   revalidatePath('/history');
-  redirect('/history');
+  revalidatePath(`/history/${id}`);
+  redirect(`/history/${id}`);
 }
 
 export async function deleteGalleryPost(formData: FormData) {
@@ -105,11 +141,12 @@ export async function createGalleryComment(formData: FormData) {
     body,
   });
   if (error) {
-    return redirect('/history?error=' + encodeURIComponent(error.message));
+    return redirect(`/history/${post_id}?error=` + encodeURIComponent(error.message));
   }
 
   revalidatePath('/history');
-  redirect('/history#post-' + post_id);
+  revalidatePath(`/history/${post_id}`);
+  redirect(`/history/${post_id}`);
 }
 
 export async function deleteGalleryComment(formData: FormData) {
@@ -128,9 +165,10 @@ export async function deleteGalleryComment(formData: FormData) {
     .eq('author_id', user.id);
 
   if (error) {
-    return redirect('/history?error=' + encodeURIComponent(error.message));
+    return redirect(`/history/${post_id}?error=` + encodeURIComponent(error.message));
   }
 
   revalidatePath('/history');
-  redirect(post_id ? `/history#post-${post_id}` : '/history');
+  revalidatePath(`/history/${post_id}`);
+  redirect(post_id ? `/history/${post_id}` : '/history');
 }
