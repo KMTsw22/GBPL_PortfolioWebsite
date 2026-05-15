@@ -14,6 +14,9 @@ export function Header({ name }: { name?: string | null }) {
           <Link href="/" className="rounded-md px-3 py-1.5 hover:bg-neutral-100 hover:text-ink">
             Members
           </Link>
+          <Link href="/history" className="rounded-md px-3 py-1.5 hover:bg-neutral-100 hover:text-ink">
+            History
+          </Link>
           {isLoggedIn ? (
             <>
               <Link href="/profile" className="rounded-md px-3 py-1.5 hover:bg-neutral-100 hover:text-ink">

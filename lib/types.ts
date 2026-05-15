@@ -27,6 +27,31 @@ export type Member = {
   updated_at: string;
 };
 
+// History 탭 — 사진 갤러리
+export type GalleryPost = {
+  id: string;
+  author_id: string;
+  image_url: string;
+  caption: string | null;
+  created_at: string;
+  updated_at: string;
+  // 조회 시 조인으로 채워짐 (DB 컬럼 X)
+  author_email?: string;
+  author_name?: string;
+  author_avatar?: string | null;
+  comments?: GalleryComment[];
+};
+
+export type GalleryComment = {
+  id: string;
+  post_id: string;
+  author_id: string;
+  body: string;
+  created_at: string;
+  author_email?: string;
+  author_name?: string;
+};
+
 // 사용자가 "www.linkedin.com/..." 처럼 프로토콜 없이 적어도 절대 URL 로 보정.
 // (없으면 브라우저가 상대 경로로 해석해서 우리 도메인 뒤에 붙어버림 → 404)
 // file: 같은 안전한 스킴은 통과시키고, javascript: 같은 위험 스킴은 차단.

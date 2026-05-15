@@ -12,8 +12,12 @@ insert into storage.buckets (id, name, public, file_size_limit)
 values ('resumes', 'resumes', true, 104857600)   -- 100 MiB
 on conflict (id) do nothing;
 
+insert into storage.buckets (id, name, public, file_size_limit)
+values ('gallery', 'gallery', true, 104857600)   -- 100 MiB (History 탭 사진)
+on conflict (id) do nothing;
+
 -- 이미 만들어진 버킷이면 한도만 갱신
-update storage.buckets set file_size_limit = 104857600 where id in ('avatars','resumes');
+update storage.buckets set file_size_limit = 104857600 where id in ('avatars','resumes','gallery');
 
 -- 2) 정책: 누구나 읽기 / 본인 폴더에만 쓰기
 --    파일 경로 규칙: '<user_id>/<filename>' (첫 번째 폴더가 본인 uid)
@@ -83,5 +87,39 @@ create policy "resumes_owner_delete"
   to authenticated
   using (
     bucket_id = 'resumes'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+-- ── gallery (History 탭 사진) ─────────────────────────────
+drop policy if exists "gallery_public_read"   on storage.objects;
+drop policy if exists "gallery_owner_insert"  on storage.objects;
+drop policy if exists "gallery_owner_update"  on storage.objects;
+drop policy if exists "gallery_owner_delete"  on storage.objects;
+
+create policy "gallery_public_read"
+  on storage.objects for select
+  using (bucket_id = 'gallery');
+
+create policy "gallery_owner_insert"
+  on storage.objects for insert
+  to authenticated
+  with check (
+    bucket_id = 'gallery'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create policy "gallery_owner_update"
+  on storage.objects for update
+  to authenticated
+  using (
+    bucket_id = 'gallery'
+    and (storage.foldername(name))[1] = auth.uid()::text
+  );
+
+create policy "gallery_owner_delete"
+  on storage.objects for delete
+  to authenticated
+  using (
+    bucket_id = 'gallery'
     and (storage.foldername(name))[1] = auth.uid()::text
   );

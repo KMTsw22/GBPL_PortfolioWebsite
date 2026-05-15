@@ -150,7 +150,125 @@ left join public.members m on m.id = u.id
 where m.id is null;
 
 -- ============================================================
--- 5) (선택) 화이트리스트 시드 — 이미 있는 이메일은 건너뜀
+-- 5) History 탭 — 사진 갤러리 + 댓글
+--    누구나(비로그인 포함) 조회 가능, 작성/편집/삭제는 본인만.
+-- ============================================================
+
+create table if not exists public.gallery_posts (
+  id         uuid primary key default gen_random_uuid(),
+  author_id  uuid not null references auth.users(id) on delete cascade,
+  image_url  text not null,
+  caption    text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists gallery_posts_created_at_idx
+  on public.gallery_posts (created_at desc);
+
+alter table public.gallery_posts enable row level security;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='gallery_posts'
+      and policyname='gallery_posts_read_public'
+  ) then
+    create policy "gallery_posts_read_public"
+      on public.gallery_posts for select
+      to anon, authenticated
+      using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='gallery_posts'
+      and policyname='gallery_posts_insert_self'
+  ) then
+    create policy "gallery_posts_insert_self"
+      on public.gallery_posts for insert
+      to authenticated
+      with check (auth.uid() = author_id);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='gallery_posts'
+      and policyname='gallery_posts_update_self'
+  ) then
+    create policy "gallery_posts_update_self"
+      on public.gallery_posts for update
+      to authenticated
+      using (auth.uid() = author_id)
+      with check (auth.uid() = author_id);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='gallery_posts'
+      and policyname='gallery_posts_delete_self'
+  ) then
+    create policy "gallery_posts_delete_self"
+      on public.gallery_posts for delete
+      to authenticated
+      using (auth.uid() = author_id);
+  end if;
+end $$;
+
+
+create table if not exists public.gallery_comments (
+  id         uuid primary key default gen_random_uuid(),
+  post_id    uuid not null references public.gallery_posts(id) on delete cascade,
+  author_id  uuid not null references auth.users(id) on delete cascade,
+  body       text not null,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists gallery_comments_post_id_idx
+  on public.gallery_comments (post_id, created_at asc);
+
+alter table public.gallery_comments enable row level security;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='gallery_comments'
+      and policyname='gallery_comments_read_public'
+  ) then
+    create policy "gallery_comments_read_public"
+      on public.gallery_comments for select
+      to anon, authenticated
+      using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='gallery_comments'
+      and policyname='gallery_comments_insert_self'
+  ) then
+    create policy "gallery_comments_insert_self"
+      on public.gallery_comments for insert
+      to authenticated
+      with check (auth.uid() = author_id);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='gallery_comments'
+      and policyname='gallery_comments_delete_self'
+  ) then
+    create policy "gallery_comments_delete_self"
+      on public.gallery_comments for delete
+      to authenticated
+      using (auth.uid() = author_id);
+  end if;
+end $$;
+
+
+-- ============================================================
+-- 6) (선택) 화이트리스트 시드 — 이미 있는 이메일은 건너뜀
 --    실 운영에선 Dashboard 에서 직접 관리하는 게 편함.
 -- ============================================================
 insert into public.allowed_emails (email, note) values

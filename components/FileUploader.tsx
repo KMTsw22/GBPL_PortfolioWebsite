@@ -6,7 +6,7 @@ import { createClient } from '@/lib/supabase/client';
 type Uploaded = { url: string; name: string; size: number; type: string };
 
 type Props = {
-  bucket: 'avatars' | 'resumes';
+  bucket: 'avatars' | 'resumes' | 'gallery';
   userId: string;
   accept?: string;
   maxMB?: number;
