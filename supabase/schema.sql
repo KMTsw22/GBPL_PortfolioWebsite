@@ -268,7 +268,81 @@ end $$;
 
 
 -- ============================================================
--- 6) (선택) 화이트리스트 시드 — 이미 있는 이메일은 건너뜀
+-- 6) Calendar 탭 — 수업 일정
+--    누구나(비로그인 포함) 조회 가능, 작성/편집/삭제는 본인만.
+--    starts_at / ends_at 은 UTC timestamptz, 종일 일정은 all_day = true.
+-- ============================================================
+
+create table if not exists public.class_events (
+  id          uuid primary key default gen_random_uuid(),
+  author_id   uuid not null references auth.users(id) on delete cascade,
+  title       text not null,
+  location    text,
+  description text,
+  starts_at   timestamptz not null,
+  ends_at     timestamptz,
+  all_day     boolean not null default false,
+  color       text,
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
+
+create index if not exists class_events_starts_at_idx
+  on public.class_events (starts_at asc);
+
+alter table public.class_events enable row level security;
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='class_events'
+      and policyname='class_events_read_public'
+  ) then
+    create policy "class_events_read_public"
+      on public.class_events for select
+      to anon, authenticated
+      using (true);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='class_events'
+      and policyname='class_events_insert_self'
+  ) then
+    create policy "class_events_insert_self"
+      on public.class_events for insert
+      to authenticated
+      with check (auth.uid() = author_id);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='class_events'
+      and policyname='class_events_update_self'
+  ) then
+    create policy "class_events_update_self"
+      on public.class_events for update
+      to authenticated
+      using (auth.uid() = author_id)
+      with check (auth.uid() = author_id);
+  end if;
+
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='class_events'
+      and policyname='class_events_delete_self'
+  ) then
+    create policy "class_events_delete_self"
+      on public.class_events for delete
+      to authenticated
+      using (auth.uid() = author_id);
+  end if;
+end $$;
+
+
+-- ============================================================
+-- 7) (선택) 화이트리스트 시드 — 이미 있는 이메일은 건너뜀
 --    실 운영에선 Dashboard 에서 직접 관리하는 게 편함.
 -- ============================================================
 insert into public.allowed_emails (email, note) values
