@@ -11,9 +11,9 @@ export function Header({ name }: { name?: string | null }) {
           <Image
             src="/gpbl-logo.png"
             alt="GPBL 5th"
-            width={24}
-            height={24}
-            className="h-6 w-6 rounded-md"
+            width={40}
+            height={40}
+            className="h-10 w-10 rounded-lg"
             priority
           />
           GPBL-5th
