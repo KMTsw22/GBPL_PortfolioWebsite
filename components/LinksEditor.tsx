@@ -92,7 +92,7 @@ export function LinksEditor({ items, onChange, userId }: Props) {
         </ul>
       ) : (
         <p className="rounded-xl border border-dashed border-line bg-neutral-50 p-4 text-center text-xs text-ink-muted">
-          아래에서 링크나 파일을 추가하세요. ⭐ 표시된 항목이 카드에 보여집니다.
+          아래에서 링크/파일 추가하기 · ⭐ 표시한 항목만 카드에 노출
         </p>
       )}
 
@@ -126,7 +126,7 @@ export function LinksEditor({ items, onChange, userId }: Props) {
           </button>
         </div>
         <p className="mt-2 text-[11px] text-ink-muted">
-          아이콘은 "자동"이 기본 — URL 도메인을 보고 알아서 골라줘요. 원하면 직접 선택.
+          아이콘 기본값 "자동" · URL 도메인 기반 자동 매칭. 직접 고르려면 좌측 버튼 누르기
         </p>
       </div>
 

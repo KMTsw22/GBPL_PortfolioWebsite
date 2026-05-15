@@ -36,7 +36,7 @@ export default async function ProfilePage({ searchParams }: Props) {
             <div>
               <h1 className="text-2xl font-semibold tracking-tight">내 프로필</h1>
               <p className="mt-1 text-sm text-ink-muted">
-                여기서 입력한 내용이 멤버 카드와 상세 페이지에 보여져요.
+                멤버 카드에 보여줄 내용 채워넣기
               </p>
             </div>
             <Link href={`/members/${user.id}`} className="btn">미리보기</Link>
@@ -44,7 +44,7 @@ export default async function ProfilePage({ searchParams }: Props) {
 
           {saved ? (
             <p className="mt-6 rounded-md bg-emerald-50 px-3 py-2 text-sm text-emerald-700">
-              저장되었어요.
+              저장 완료
             </p>
           ) : null}
           {error ? (

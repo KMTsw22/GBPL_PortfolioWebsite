@@ -67,7 +67,7 @@ export default async function CalendarPage({ searchParams }: Props) {
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">Calendar</h1>
             <p className="mt-1 text-sm text-ink-muted">
-              우리의 매주 수업 일정 — 고정 수업은 자동으로 매주 표시돼요.
+              주간 일정 확인하기
             </p>
           </div>
           {user ? (
@@ -85,7 +85,7 @@ export default async function CalendarPage({ searchParams }: Props) {
 
         {!user ? (
           <p className="mb-6 rounded-xl border border-line bg-neutral-50 p-4 text-center text-xs text-ink-muted">
-            로그인하면 일정을 추가할 수 있어요.
+            로그인하고 일정 추가하기
           </p>
         ) : null}
 

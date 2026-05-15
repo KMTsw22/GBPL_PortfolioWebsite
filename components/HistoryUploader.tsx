@@ -87,7 +87,7 @@ export function HistoryUploader({ userId }: Props) {
               {/* 이미 올린 사진 썸네일 */}
               {images.length > 0 ? (
                 <div className="mb-3">
-                  <p className="label">첨부된 사진 ({images.length}장) — ⭐ 표시가 대표 사진</p>
+                  <p className="label">사진 {images.length}장 · ⭐ 표시한 사진을 대표로 쓰기</p>
                   <div className="grid grid-cols-3 gap-2">
                     {images.map((url, i) => (
                       <div key={`${url}-${i}`} className={`group relative aspect-square overflow-hidden rounded-lg border-2 bg-neutral-50 ${i === 0 ? 'border-accent' : 'border-line'}`}>
@@ -142,7 +142,7 @@ export function HistoryUploader({ userId }: Props) {
                       className="input"
                     />
                     <p className="mt-1 text-[11px] text-ink-muted">
-                      비워두면 업로드 시각으로 정렬돼요.
+                      비우면 업로드 시각 기준으로 정렬하기
                     </p>
                   </div>
                   <textarea

@@ -63,7 +63,7 @@ export default async function HistoryPage({ searchParams }: Props) {
           <div>
             <h1 className="text-2xl font-semibold tracking-tight">History</h1>
             <p className="mt-1 text-sm text-ink-muted">
-              팀의 순간들 — 사진과 함께 남기고, 서로 댓글로 나눠요.
+              사진으로 기록 남기기
             </p>
           </div>
           {user ? (
@@ -81,14 +81,13 @@ export default async function HistoryPage({ searchParams }: Props) {
 
         {!user ? (
           <p className="mb-6 rounded-xl border border-line bg-neutral-50 p-4 text-center text-xs text-ink-muted">
-            로그인하면 사진을 올리고 댓글을 달 수 있어요.
+            로그인하고 사진 올리기 · 댓글 달기
           </p>
         ) : null}
 
         {posts.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-line bg-white p-12 text-center text-sm text-ink-muted">
-            아직 올라온 사진이 없어요.
-            {user ? ' 위 "+ 사진 올리기" 로 첫 사진을 남겨보세요.' : ''}
+            여기에 첫 사진 올리기
           </div>
         ) : (
           // 2열 그리드 — 고정 가로 비율 카드 (4:3) 로 일관된 모양

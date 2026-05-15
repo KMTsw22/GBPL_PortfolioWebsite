@@ -195,7 +195,7 @@ export function HistoryPostDetail({ post, currentUserId }: Props) {
             </div>
 
             <div>
-              <label className="label">사진 ({images.length}장) — ⭐ 표시가 대표 사진 (목록 화면에 노출)</label>
+              <label className="label">사진 {images.length}장 · ⭐ 표시한 사진을 목록 대표로 노출하기</label>
               <div className="mb-2 grid grid-cols-4 gap-2">
                 {images.map((url, i) => (
                   <div key={`${url}-${i}`} className={`group relative aspect-square overflow-hidden rounded-lg border-2 bg-neutral-50 ${i === 0 ? 'border-accent' : 'border-line'}`}>
@@ -293,7 +293,7 @@ export function HistoryPostDetail({ post, currentUserId }: Props) {
             })}
           </ul>
         ) : (
-          <p className="mb-3 text-xs text-ink-muted">아직 댓글이 없어요.</p>
+          <p className="mb-3 text-xs text-ink-muted">첫 댓글 달기</p>
         )}
 
         {currentUserId ? (
@@ -312,7 +312,7 @@ export function HistoryPostDetail({ post, currentUserId }: Props) {
             <button type="submit" className="btn-primary">올리기</button>
           </form>
         ) : (
-          <p className="text-xs text-ink-muted">댓글은 로그인 후.</p>
+          <p className="text-xs text-ink-muted">로그인하고 댓글 달기</p>
         )}
       </div>
 

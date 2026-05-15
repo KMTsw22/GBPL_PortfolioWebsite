@@ -39,13 +39,13 @@ export default async function HomePage() {
         <div className="mb-8 flex items-end justify-between">
           <h2 className="text-2xl font-semibold tracking-tight">Members</h2>
           <p className="text-sm text-ink-muted">
-            카드를 클릭하여 자세히 보기
+            카드 눌러서 자세히 보기
           </p>
         </div>
 
         {members.length === 0 ? (
           <div className="rounded-2xl border border-dashed border-line bg-white p-12 text-center text-sm text-ink-muted">
-            아직 등록된 멤버가 없어요.
+            등록된 멤버가 없어요.
           </div>
         ) : (
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -59,7 +59,6 @@ export default async function HomePage() {
       <footer className="border-t border-line py-7">
         <div className="container-page flex items-center justify-between text-xs text-ink-muted">
           <span>© {new Date().getFullYear()} GPBL-5th</span>
-          <span>Made with care.</span>
         </div>
       </footer>
     </>

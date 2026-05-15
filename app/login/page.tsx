@@ -22,7 +22,7 @@ export default async function LoginPage({ searchParams }: Props) {
           />
           <h1 className="text-2xl font-semibold tracking-tight">GPBL-5th</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            등록된 Google 계정만 들어올 수 있어요.
+            등록된 Google 계정만 접근 가능
           </p>
         </div>
 
@@ -48,7 +48,7 @@ export default async function LoginPage({ searchParams }: Props) {
         </form>
 
         <p className="mt-6 text-center text-xs text-ink-muted">
-          접근 권한이 필요하면 관리자에게 본인 Google 이메일을 알려주세요.
+          접근 권한 받기: 관리자에게 본인 Google 이메일 알려주기
         </p>
       </div>
     </main>

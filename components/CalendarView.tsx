@@ -61,13 +61,32 @@ export function CalendarView({ weekStartISO, weeklyClasses, events, currentUserI
   const hourMarks: number[] = [];
   for (let m = CAL_DAY_START_MIN; m <= CAL_DAY_END_MIN; m += 60) hourMarks.push(m);
 
-  const weekLabel = `${weekStart.getFullYear()}년 ${weekStart.getMonth() + 1}월 ${weekStart.getDate()}일 주`;
+  // 주의 "어느 달, 몇째 주" 는 목요일이 속한 달 기준 (ISO 유사) — 월 경계 걸치는 주도 자연스럽게
+  const weekEnd = addDays(weekStart, 6);
+  const thursday = addDays(weekStart, 4);
+  const refMonth = thursday.getMonth();
+  const refYear = thursday.getFullYear();
+  const firstOfRefMonth = new Date(refYear, refMonth, 1);
+  const firstSundayOfRefMonth = new Date(refYear, refMonth, 1 - firstOfRefMonth.getDay());
+  const weekIndex = Math.floor(
+    Math.round((weekStart.getTime() - firstSundayOfRefMonth.getTime()) / 86400000) / 7
+  ) + 1;
+
+  const rangeLabel =
+    weekStart.getMonth() === weekEnd.getMonth()
+      ? `${weekStart.getMonth() + 1}월 ${weekStart.getDate()}일 ~ ${weekEnd.getDate()}일`
+      : `${weekStart.getMonth() + 1}월 ${weekStart.getDate()}일 ~ ${weekEnd.getMonth() + 1}월 ${weekEnd.getDate()}일`;
+
+  const weekLabel = `${refYear}년 ${refMonth + 1}월 ${weekIndex}주차`;
 
   return (
     <div className="space-y-4">
       {/* Week nav */}
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold tracking-tight">{weekLabel}</h2>
+        <h2 className="text-lg font-semibold tracking-tight">
+          {weekLabel}
+          <span className="ml-2 text-sm font-normal text-ink-muted">({rangeLabel})</span>
+        </h2>
         <div className="flex items-center gap-1.5">
           <button type="button" onClick={goPrev} className="btn px-3 py-1.5 text-xs">← 이전 주</button>
           <button type="button" onClick={goThis} className="btn px-3 py-1.5 text-xs">이번 주</button>
