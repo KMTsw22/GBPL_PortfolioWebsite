@@ -67,46 +67,47 @@ export default async function HistoryPage({ searchParams }: Props) {
       <Header name={nameFromEmail(user?.email)} />
 
       <main className="container-page py-12">
-        <div className="mx-auto max-w-2xl">
-          <div className="mb-6 flex items-end justify-between">
-            <div>
-              <h1 className="text-2xl font-semibold tracking-tight">History</h1>
-              <p className="mt-1 text-sm text-ink-muted">
-                팀의 순간들 — 사진과 함께 남기고, 서로 댓글로 나눠요.
-              </p>
-            </div>
-            {user ? (
-              <div className="shrink-0">
-                <HistoryUploader userId={user.id} />
-              </div>
-            ) : null}
+        <div className="mb-6 flex items-end justify-between">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">History</h1>
+            <p className="mt-1 text-sm text-ink-muted">
+              팀의 순간들 — 사진과 함께 남기고, 서로 댓글로 나눠요.
+            </p>
           </div>
-
-          {error ? (
-            <p className="mb-4 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700">
-              {error}
-            </p>
-          ) : null}
-
-          {!user ? (
-            <p className="mb-6 rounded-xl border border-line bg-neutral-50 p-4 text-center text-xs text-ink-muted">
-              로그인하면 사진을 올리고 댓글을 달 수 있어요.
-            </p>
-          ) : null}
-
-          {posts.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-line bg-white p-12 text-center text-sm text-ink-muted">
-              아직 올라온 사진이 없어요.
-              {user ? ' 위 "+ 사진 올리기" 로 첫 사진을 남겨보세요.' : ''}
+          {user ? (
+            <div className="shrink-0">
+              <HistoryUploader userId={user.id} />
             </div>
-          ) : (
-            <div className="space-y-6">
-              {posts.map((p) => (
-                <HistoryPostCard key={p.id} post={p} currentUserId={user?.id ?? null} />
-              ))}
-            </div>
-          )}
+          ) : null}
         </div>
+
+        {error ? (
+          <p className="mb-4 rounded-md bg-rose-50 px-3 py-2 text-sm text-rose-700">
+            {error}
+          </p>
+        ) : null}
+
+        {!user ? (
+          <p className="mb-6 rounded-xl border border-line bg-neutral-50 p-4 text-center text-xs text-ink-muted">
+            로그인하면 사진을 올리고 댓글을 달 수 있어요.
+          </p>
+        ) : null}
+
+        {posts.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-line bg-white p-12 text-center text-sm text-ink-muted">
+            아직 올라온 사진이 없어요.
+            {user ? ' 위 "+ 사진 올리기" 로 첫 사진을 남겨보세요.' : ''}
+          </div>
+        ) : (
+          // 메이슨리 그리드 — 사진 비율 유지하면서 자연스럽게 채워짐
+          <div className="columns-1 gap-5 sm:columns-2 lg:columns-3 xl:columns-4">
+            {posts.map((p) => (
+              <div key={p.id} className="mb-5 break-inside-avoid">
+                <HistoryPostCard post={p} currentUserId={user?.id ?? null} />
+              </div>
+            ))}
+          </div>
+        )}
       </main>
     </>
   );

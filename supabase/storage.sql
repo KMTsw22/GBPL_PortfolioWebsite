@@ -13,11 +13,12 @@ values ('resumes', 'resumes', true, 104857600)   -- 100 MiB
 on conflict (id) do nothing;
 
 insert into storage.buckets (id, name, public, file_size_limit)
-values ('gallery', 'gallery', true, 104857600)   -- 100 MiB (History 탭 사진)
+values ('gallery', 'gallery', true, 314572800)   -- 300 MiB (History 탭 사진/영상)
 on conflict (id) do nothing;
 
--- 이미 만들어진 버킷이면 한도만 갱신
-update storage.buckets set file_size_limit = 104857600 where id in ('avatars','resumes','gallery');
+-- 이미 만들어진 버킷이면 한도 갱신
+update storage.buckets set file_size_limit = 104857600 where id in ('avatars','resumes');
+update storage.buckets set file_size_limit = 314572800 where id = 'gallery';
 
 -- 2) 정책: 누구나 읽기 / 본인 폴더에만 쓰기
 --    파일 경로 규칙: '<user_id>/<filename>' (첫 번째 폴더가 본인 uid)

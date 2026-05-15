@@ -78,7 +78,7 @@ export function HistoryUploader({ userId }: Props) {
           bucket="gallery"
           userId={userId}
           accept="image/*"
-          maxMB={20}
+          maxMB={300}
           onUploaded={(u) => setImageUrl(u.url)}
         />
       )}
