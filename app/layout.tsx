@@ -2,23 +2,23 @@ import type { Metadata } from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Team Portfolio',
+  title: 'GPBL-5th',
   description: '12명의 멤버 포트폴리오, 이력서, 링크',
   icons: {
-    icon: [{ url: '/kookmin-icon.webp', type: 'image/webp' }],
-    shortcut: '/kookmin-icon.webp',
-    apple: '/kookmin-icon.webp',
+    icon: [{ url: '/gpbl-logo.png', type: 'image/png' }],
+    shortcut: '/gpbl-logo.png',
+    apple: '/gpbl-logo.png',
   },
   openGraph: {
-    title: 'Team Portfolio',
+    title: 'GPBL-5th',
     description: 'GPBL 5기 · 12명의 멤버 포트폴리오, 이력서, 링크',
     type: 'website',
     locale: 'ko_KR',
-    siteName: 'Team Portfolio',
+    siteName: 'GPBL-5th',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Team Portfolio',
+    title: 'GPBL-5th',
     description: 'GPBL 5기 · 12명의 멤버 포트폴리오, 이력서, 링크',
   },
 };

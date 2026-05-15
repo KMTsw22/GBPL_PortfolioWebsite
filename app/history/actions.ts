@@ -10,6 +10,13 @@ function clean(value: FormDataEntryValue | null, max = 2000): string | null {
   return v.slice(0, max);
 }
 
+// 'YYYY-MM-DD' 형식만 통과시킴 (HTML date input 의 표준 포맷)
+function cleanDate(value: FormDataEntryValue | null): string | null {
+  const v = String(value ?? '').trim();
+  if (!v) return null;
+  return /^\d{4}-\d{2}-\d{2}$/.test(v) ? v : null;
+}
+
 export async function createGalleryPost(formData: FormData) {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -20,11 +27,13 @@ export async function createGalleryPost(formData: FormData) {
     return redirect('/history?error=' + encodeURIComponent('이미지를 먼저 업로드해주세요.'));
   }
   const caption = clean(formData.get('caption'));
+  const event_date = cleanDate(formData.get('event_date'));
 
   const { error } = await supabase.from('gallery_posts').insert({
     author_id: user.id,
     image_url,
     caption,
+    event_date,
   });
   if (error) {
     return redirect('/history?error=' + encodeURIComponent(error.message));
@@ -43,10 +52,11 @@ export async function updateGalleryPost(formData: FormData) {
   if (!id) return redirect('/history');
 
   const caption = clean(formData.get('caption'));
+  const event_date = cleanDate(formData.get('event_date'));
 
   const { error } = await supabase
     .from('gallery_posts')
-    .update({ caption, updated_at: new Date().toISOString() })
+    .update({ caption, event_date, updated_at: new Date().toISOString() })
     .eq('id', id)
     .eq('author_id', user.id);
 

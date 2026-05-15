@@ -159,9 +159,13 @@ create table if not exists public.gallery_posts (
   author_id  uuid not null references auth.users(id) on delete cascade,
   image_url  text not null,
   caption    text,
+  event_date date,                          -- 사진 속 일이 있었던 날 (선택)
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+-- 컬럼 추가는 안전 (없을 때만 추가)
+alter table public.gallery_posts add column if not exists event_date date;
 
 create index if not exists gallery_posts_created_at_idx
   on public.gallery_posts (created_at desc);
@@ -342,7 +346,61 @@ end $$;
 
 
 -- ============================================================
--- 7) (선택) 화이트리스트 시드 — 이미 있는 이메일은 건너뜀
+-- 7) 매주 고정 수업표 — weekly_classes
+--    UI 에서는 편집/추가 불가 (RLS 읽기만 허용).
+--    수업이 바뀌면 Supabase Dashboard → Table Editor 에서 직접 수정.
+--    day_of_week: 0=일, 1=월, 2=화, 3=수, 4=목, 5=금, 6=토
+--    start_minutes / end_minutes: 자정 기준 분 (예: 11:00 = 660)
+-- ============================================================
+
+create table if not exists public.weekly_classes (
+  id            text primary key,                  -- 안정적인 슬러그 (시드 upsert 용)
+  title         text not null,
+  day_of_week   smallint not null check (day_of_week between 0 and 6),
+  start_minutes smallint not null check (start_minutes between 0 and 1439),
+  end_minutes   smallint not null check (end_minutes between 0 and 1440),
+  location      text,
+  color         text,
+  sort_order    smallint not null default 0,
+  created_at    timestamptz not null default now()
+);
+
+create index if not exists weekly_classes_dow_idx
+  on public.weekly_classes (day_of_week asc, start_minutes asc);
+
+alter table public.weekly_classes enable row level security;
+
+-- 누구나(anon 포함) 읽기. 쓰기 정책은 없음 → service role(대시보드)에서만 가능.
+do $$
+begin
+  if not exists (
+    select 1 from pg_policies
+    where schemaname='public' and tablename='weekly_classes'
+      and policyname='weekly_classes_public_read'
+  ) then
+    create policy "weekly_classes_public_read"
+      on public.weekly_classes for select
+      to anon, authenticated
+      using (true);
+  end if;
+end $$;
+
+-- 시드 — 이미 있는 id 는 건너뜀 (덮어쓰지 않음).
+-- 수업 시간/이름을 바꾸려면 Dashboard 에서 직접 UPDATE 하거나,
+-- 여기 시드 행을 지우고 새 id 로 추가하면 됨.
+insert into public.weekly_classes (id, title, day_of_week, start_minutes, end_minutes, sort_order) values
+  ('mon-startup',     'Startup',                        1,  660,  720, 10),
+  ('mon-fullstack',   'Full-stack service development', 1, 1020, 1200, 20),
+  ('tue-shopping',    'Shopping',                       2,  630,  930, 10),
+  ('wed-startup2',    'Startup 2',                      3,  630,  720, 10),
+  ('wed-applied-ai',  'Applied AI',                     3,  780,  930, 20),
+  ('thu-english',     'English Conversation',           4,  810,  990, 10),
+  ('fri-cloud',       'Cloud-based product building',   5,  990, 1110, 10)
+on conflict (id) do nothing;
+
+
+-- ============================================================
+-- 8) (선택) 화이트리스트 시드 — 이미 있는 이메일은 건너뜀
 --    실 운영에선 Dashboard 에서 직접 관리하는 게 편함.
 -- ============================================================
 insert into public.allowed_emails (email, note) values

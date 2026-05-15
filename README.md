@@ -1,4 +1,4 @@
-# Team Portfolio
+# GPBL-5th
 
 12명 멤버 + 관리자(David) 전용 포트폴리오 사이트.  
 **Next.js 15 (App Router) + Tailwind + Supabase (Google OAuth)** 로 만들고, **Vercel** 에 배포합니다.

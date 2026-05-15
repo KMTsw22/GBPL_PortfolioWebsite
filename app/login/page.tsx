@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { signInWithGoogle } from './actions';
 
 type Props = {
@@ -11,8 +12,15 @@ export default async function LoginPage({ searchParams }: Props) {
     <main className="min-h-screen grid place-items-center px-6">
       <div className="w-full max-w-sm">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 h-9 w-9 rounded-lg bg-gradient-to-br from-accent to-indigo-300" />
-          <h1 className="text-2xl font-semibold tracking-tight">Team Portfolio</h1>
+          <Image
+            src="/gpbl-logo.png"
+            alt="GPBL 5th"
+            width={56}
+            height={56}
+            className="mx-auto mb-4 h-14 w-14 rounded-2xl"
+            priority
+          />
+          <h1 className="text-2xl font-semibold tracking-tight">GPBL-5th</h1>
           <p className="mt-1 text-sm text-ink-muted">
             등록된 Google 계정만 들어올 수 있어요.
           </p>

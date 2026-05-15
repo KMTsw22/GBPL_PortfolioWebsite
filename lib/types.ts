@@ -33,6 +33,7 @@ export type GalleryPost = {
   author_id: string;
   image_url: string;
   caption: string | null;
+  event_date: string | null;    // YYYY-MM-DD — 사진 속 일이 있었던 날 (선택)
   created_at: string;
   updated_at: string;
   // 조회 시 조인으로 채워짐 (DB 컬럼 X)
@@ -52,7 +53,20 @@ export type GalleryComment = {
   author_name?: string;
 };
 
-// Calendar 탭 — 수업 일정
+// Calendar 탭 — 매주 고정 수업 (DB: weekly_classes)
+export type WeeklyClass = {
+  id: string;                // 'mon-startup' 같은 슬러그
+  title: string;
+  day_of_week: number;       // 0=일, 1=월, ... 6=토
+  start_minutes: number;     // 자정 기준 분
+  end_minutes: number;
+  location: string | null;
+  color: string | null;
+  sort_order: number;
+  created_at: string;
+};
+
+// Calendar 탭 — 사용자 추가 일정
 export type ClassEvent = {
   id: string;
   author_id: string;

@@ -25,11 +25,19 @@ function timeAgo(iso: string) {
   return new Date(iso).toLocaleDateString('ko-KR', { year: '2-digit', month: '2-digit', day: '2-digit' });
 }
 
+// 'YYYY-MM-DD' → '2026년 5월 14일' 형식
+function formatEventDate(date: string) {
+  const [y, m, d] = date.split('-');
+  if (!y || !m || !d) return date;
+  return `${y}년 ${Number(m)}월 ${Number(d)}일`;
+}
+
 const COMMENTS_PREVIEW = 2;
 
 export function HistoryPostCard({ post, currentUserId }: Props) {
   const [editing, setEditing] = useState(false);
   const [caption, setCaption] = useState(post.caption ?? '');
+  const [eventDate, setEventDate] = useState(post.event_date ?? '');
   const [commentBody, setCommentBody] = useState('');
   const [showAllComments, setShowAllComments] = useState(false);
   const [captionExpanded, setCaptionExpanded] = useState(false);
@@ -63,7 +71,16 @@ export function HistoryPostCard({ post, currentUserId }: Props) {
             <Avatar name={post.author_name ?? '?'} src={post.author_avatar} size={32} />
             <div className="min-w-0">
               <p className="truncate text-sm font-medium">{post.author_name ?? post.author_email}</p>
-              <p className="text-[11px] text-ink-muted">{timeAgo(post.created_at)}</p>
+              <p className="text-[11px] text-ink-muted">
+                {post.event_date ? (
+                  <>
+                    <span>{formatEventDate(post.event_date)}</span>
+                    <span className="ml-1 opacity-60">· {timeAgo(post.created_at)} 업로드</span>
+                  </>
+                ) : (
+                  timeAgo(post.created_at)
+                )}
+              </p>
             </div>
           </div>
           {isAuthor ? (
@@ -109,6 +126,16 @@ export function HistoryPostCard({ post, currentUserId }: Props) {
         {editing ? (
           <form action={updateGalleryPost} className="space-y-2 px-3.5 py-3">
             <input type="hidden" name="id" value={post.id} />
+            <div>
+              <label className="label">언제 있었던 일?</label>
+              <input
+                type="date"
+                name="event_date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+                className="input text-sm"
+              />
+            </div>
             <textarea
               name="caption"
               value={caption}
@@ -121,7 +148,11 @@ export function HistoryPostCard({ post, currentUserId }: Props) {
             <div className="flex items-center justify-end gap-2">
               <button
                 type="button"
-                onClick={() => { setCaption(post.caption ?? ''); setEditing(false); }}
+                onClick={() => {
+                  setCaption(post.caption ?? '');
+                  setEventDate(post.event_date ?? '');
+                  setEditing(false);
+                }}
                 className="btn"
               >
                 취소

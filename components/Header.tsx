@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import Link from 'next/link';
 import { signOut } from '@/app/login/actions';
 
@@ -7,8 +8,15 @@ export function Header({ name }: { name?: string | null }) {
     <header className="sticky top-0 z-40 border-b border-line bg-canvas/80 backdrop-blur">
       <div className="container-page flex h-16 items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5 font-semibold tracking-tight">
-          <span className="h-5 w-5 rounded-md bg-gradient-to-br from-accent to-indigo-300" />
-          Team Portfolio
+          <Image
+            src="/gpbl-logo.png"
+            alt="GPBL 5th"
+            width={24}
+            height={24}
+            className="h-6 w-6 rounded-md"
+            priority
+          />
+          GPBL-5th
         </Link>
         <nav className="flex items-center gap-1 text-sm text-ink-soft">
           <Link href="/" className="rounded-md px-3 py-1.5 hover:bg-neutral-100 hover:text-ink">
@@ -16,6 +24,9 @@ export function Header({ name }: { name?: string | null }) {
           </Link>
           <Link href="/history" className="rounded-md px-3 py-1.5 hover:bg-neutral-100 hover:text-ink">
             History
+          </Link>
+          <Link href="/calendar" className="rounded-md px-3 py-1.5 hover:bg-neutral-100 hover:text-ink">
+            Calendar
           </Link>
           {isLoggedIn ? (
             <>

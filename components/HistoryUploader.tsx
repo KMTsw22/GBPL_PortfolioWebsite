@@ -9,11 +9,13 @@ type Props = { userId: string };
 export function HistoryUploader({ userId }: Props) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [caption, setCaption] = useState('');
+  const [eventDate, setEventDate] = useState('');
   const [open, setOpen] = useState(false);
 
   function reset() {
     setImageUrl('');
     setCaption('');
+    setEventDate('');
     setOpen(false);
   }
 
@@ -80,6 +82,19 @@ export function HistoryUploader({ userId }: Props) {
                   </div>
                   <form action={createGalleryPost} className="space-y-3">
                     <input type="hidden" name="image_url" value={imageUrl} />
+                    <div>
+                      <label className="label">언제 있었던 일?</label>
+                      <input
+                        type="date"
+                        name="event_date"
+                        value={eventDate}
+                        onChange={(e) => setEventDate(e.target.value)}
+                        className="input"
+                      />
+                      <p className="mt-1 text-[11px] text-ink-muted">
+                        비워두면 업로드 시각만 표시돼요.
+                      </p>
+                    </div>
                     <textarea
                       name="caption"
                       value={caption}

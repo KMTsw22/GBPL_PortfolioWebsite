@@ -58,7 +58,7 @@ export default async function HomePage() {
 
       <footer className="border-t border-line py-7">
         <div className="container-page flex items-center justify-between text-xs text-ink-muted">
-          <span>© {new Date().getFullYear()} Team Portfolio</span>
+          <span>© {new Date().getFullYear()} GPBL-5th</span>
           <span>Made with care.</span>
         </div>
       </footer>
