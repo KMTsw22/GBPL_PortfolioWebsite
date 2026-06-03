@@ -18,12 +18,10 @@ export default async function HomePage() {
     .in('email', allowed.length > 0 ? allowed : [''])  // 빈 배열이면 PostgREST 가 에러
     .neq('email', ADMIN_EMAIL);
 
-  // 매 요청마다 순서를 섞어서 노출 (Fisher-Yates)
-  const members = rawMembers ? [...rawMembers] : [];
-  for (let i = members.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [members[i], members[j]] = [members[j], members[i]];
-  }
+  // 이름 알파벳 순으로 정렬 (영어 기준)
+  const members = (rawMembers ? [...rawMembers] : []).sort((a, b) =>
+    String(a.name ?? '').localeCompare(String(b.name ?? ''), 'en')
+  );
 
   return (
     <>
