@@ -1,13 +1,14 @@
 import Link from 'next/link';
 import { Avatar } from './Avatar';
 import { LinkButtons } from './LinkButtons';
-import { readableText, type Member } from '@/lib/types';
+import { readableText, jobCategory, type Member } from '@/lib/types';
 
 export function MemberCard({ member }: { member: Member }) {
   const pinned = (member.links ?? []).filter((l) => l.pinned);
   const theme = member.theme ?? {};
   const textColor = readableText(theme.bgColor) || undefined;
   const hasBanner = !!theme.bgImage;
+  const cat = jobCategory(member.seeking);
 
   return (
     <div
@@ -20,6 +21,17 @@ export function MemberCard({ member }: { member: Member }) {
         aria-label={member.name}
         className="absolute inset-0 z-10 focus:outline-none"
       />
+
+      {/* 직업군 배지 — 우상단. 클릭 오버레이(z-10) 위에 떠 있음 */}
+      {cat ? (
+        <span
+          className="pointer-events-none absolute right-3 top-3 z-20 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium text-white shadow-sm"
+          style={{ background: cat.color }}
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-white/90" />
+          {cat.label}
+        </span>
+      ) : null}
 
       {hasBanner ? (
         <div

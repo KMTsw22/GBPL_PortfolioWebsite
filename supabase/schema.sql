@@ -58,6 +58,8 @@ create table if not exists public.members (
 -- 컬럼 추가는 안전 (없을 때만 추가)
 alter table public.members add column if not exists links jsonb not null default '[]'::jsonb;
 alter table public.members add column if not exists theme jsonb not null default '{}'::jsonb;
+-- 멤버가 지망하는 직업군: 'builder' | 'marketer' | 'sales' | 'designer' (없으면 null)
+alter table public.members add column if not exists seeking text;
 
 -- (옛 고정 URL 컬럼들이 남아있더라도 DROP 하지 않음.
 --  필요하면 손으로 정리하거나, 사용 안하면 그냥 둬도 무방.)

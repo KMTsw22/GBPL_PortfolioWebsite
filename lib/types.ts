@@ -14,11 +14,27 @@ export type CardTheme = {
   accentColor?: string;   // 강조색 (이름 위 라인 등)
 };
 
+// 멤버가 "구하는" / 지망하는 직업군 — 각자 본인이 하나 선택
+export type JobCategory = 'builder' | 'marketer' | 'sales' | 'designer';
+
+export const JOB_CATEGORIES: { id: JobCategory; label: string; color: string }[] = [
+  { id: 'builder',  label: 'Builder',  color: '#2563eb' },  // 파랑 — 만든다
+  { id: 'marketer', label: 'Marketer', color: '#16a34a' },  // 초록 — 알린다
+  { id: 'sales',    label: 'Sales',    color: '#ea580c' },  // 주황 — 판다
+  { id: 'designer', label: 'Designer', color: '#db2777' },  // 핑크 — 꾸민다
+];
+
+// 저장된 값(문자열)으로 카테고리 정의를 찾음. 없으면 null.
+export function jobCategory(id?: string | null) {
+  return JOB_CATEGORIES.find((c) => c.id === id) ?? null;
+}
+
 export type Member = {
   id: string;
   email: string;
   name: string;
   role: string | null;
+  seeking: string | null;   // JobCategory id — 멤버가 지망하는 직업군
   bio: string | null;
   avatar_url: string | null;
   links: LinkItem[];

@@ -5,7 +5,7 @@ import { Header } from '@/components/Header';
 import { Avatar } from '@/components/Avatar';
 import { LinkButtons } from '@/components/LinkButtons';
 import { nameFromEmail } from '@/lib/roster';
-import { readableText, type Member } from '@/lib/types';
+import { readableText, jobCategory, type Member } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
 
@@ -24,6 +24,7 @@ export default async function MemberPage({ params }: Props) {
 
   if (!member) return notFound();
   const m = member as Member;
+  const cat = jobCategory(m.seeking);
 
   const theme = m.theme ?? {};
   const bgColor = theme.bgColor || '#ffffff';
@@ -76,6 +77,15 @@ export default async function MemberPage({ params }: Props) {
                   <p className="mt-1 text-sm" style={{ color: subtleText, opacity: subtleText ? 1 : 0.7 }}>
                     {m.role}
                   </p>
+                ) : null}
+                {cat ? (
+                  <span
+                    className="mt-2.5 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium text-white shadow-sm"
+                    style={{ background: cat.color }}
+                  >
+                    <span className="h-1.5 w-1.5 rounded-full bg-white/90" />
+                    {cat.label}
+                  </span>
                 ) : null}
               </div>
             </div>

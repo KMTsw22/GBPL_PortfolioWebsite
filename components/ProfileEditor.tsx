@@ -5,7 +5,7 @@ import { AvatarUploader } from './AvatarUploader';
 import { LinksEditor } from './LinksEditor';
 import { ThemeEditor } from './ThemeEditor';
 import { updateProfile } from '@/app/profile/actions';
-import type { Member, LinkItem, CardTheme } from '@/lib/types';
+import { JOB_CATEGORIES, type Member, type LinkItem, type CardTheme } from '@/lib/types';
 
 type Props = {
   userId: string;
@@ -15,6 +15,7 @@ type Props = {
 export function ProfileEditor({ userId, initial }: Props) {
   const [name, setName] = useState(initial.name ?? '');
   const [role, setRole] = useState(initial.role ?? '');
+  const [seeking, setSeeking] = useState(initial.seeking ?? '');
   const [bio, setBio] = useState(initial.bio ?? '');
   const [tags, setTags] = useState((initial.tags ?? []).join(', '));
   const [avatarUrl, setAvatarUrl] = useState<string | null>(initial.avatar_url ?? null);
@@ -27,6 +28,7 @@ export function ProfileEditor({ userId, initial }: Props) {
       <input type="hidden" name="avatar_url" value={avatarUrl ?? ''} />
       <input type="hidden" name="links" value={JSON.stringify(links)} />
       <input type="hidden" name="theme" value={JSON.stringify(theme)} />
+      <input type="hidden" name="seeking" value={seeking} />
 
       <Section title="사진">
         <AvatarUploader
@@ -40,6 +42,36 @@ export function ProfileEditor({ userId, initial }: Props) {
       <Section title="기본 정보">
         <Field label="이름" name="name" value={name} onChange={setName} required />
         <Field label="역할 / 한 줄 소개" name="role" value={role} onChange={setRole} placeholder="예: Frontend Engineer" />
+
+        <div>
+          <label className="label">직업군 (내가 지망하는 분야)</label>
+          <div className="flex flex-wrap gap-2">
+            {JOB_CATEGORIES.map((c) => {
+              const active = seeking === c.id;
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  onClick={() => setSeeking(active ? '' : c.id)}
+                  className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-sm transition"
+                  style={
+                    active
+                      ? { background: c.color, borderColor: c.color, color: '#fff' }
+                      : { borderColor: '#e5e7eb', color: '#374151' }
+                  }
+                >
+                  <span
+                    className="h-2 w-2 rounded-full"
+                    style={{ background: active ? '#fff' : c.color }}
+                  />
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-1.5 text-xs text-ink-muted">다시 누르면 선택 해제돼요.</p>
+        </div>
+
         <Field label="자기소개" name="bio" value={bio} onChange={setBio} textarea placeholder="간단한 소개를 적어주세요." />
         <Field label="태그 (쉼표로 구분)" name="tags" value={tags} onChange={setTags} placeholder="React, TypeScript, Design" />
       </Section>

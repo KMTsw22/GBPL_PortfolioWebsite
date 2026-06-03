@@ -3,7 +3,7 @@
 import { redirect } from 'next/navigation';
 import { revalidatePath } from 'next/cache';
 import { createClient } from '@/lib/supabase/server';
-import { normalizeUrl, type LinkItem, type LinkKind, type CardTheme } from '@/lib/types';
+import { normalizeUrl, JOB_CATEGORIES, type LinkItem, type LinkKind, type CardTheme } from '@/lib/types';
 
 function clean(value: FormDataEntryValue | null): string | null {
   const v = String(value ?? '').trim();
@@ -62,11 +62,16 @@ export async function updateProfile(formData: FormData) {
   const tagsRaw = String(formData.get('tags') ?? '');
   const tags = tagsRaw.split(',').map((t) => t.trim()).filter(Boolean);
 
+  // 직업군 — 알려진 값만 통과, 그 외(빈 값 포함)는 null
+  const seekingRaw = String(formData.get('seeking') ?? '').trim();
+  const seeking = JOB_CATEGORIES.some((c) => c.id === seekingRaw) ? seekingRaw : null;
+
   const payload = {
     id: user.id,
     email: user.email!,
     name: String(formData.get('name') ?? '').trim() || (user.email ?? 'Member'),
     role: clean(formData.get('role')),
+    seeking,
     bio: clean(formData.get('bio')),
     avatar_url: clean(formData.get('avatar_url')),
     links: parseLinks(formData.get('links')),
