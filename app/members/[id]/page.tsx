@@ -5,6 +5,7 @@ import { Header } from '@/components/Header';
 import { Avatar } from '@/components/Avatar';
 import { LinkButtons } from '@/components/LinkButtons';
 import { nameFromEmail } from '@/lib/roster';
+import { isCircleMember } from '@/lib/circle';
 import { readableText, jobCategory, type Member } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -38,7 +39,7 @@ export default async function MemberPage({ params }: Props) {
 
   return (
     <>
-      <Header name={nameFromEmail(user?.email)} />
+      <Header name={nameFromEmail(user?.email)} isCircleMember={isCircleMember(user?.email)} />
 
       <main className="container-page py-12">
         <Link href="/" className="mb-8 inline-flex items-center gap-1.5 text-sm text-ink-muted hover:text-ink">

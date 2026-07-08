@@ -3,6 +3,7 @@ import { Header } from '@/components/Header';
 import { CalendarView } from '@/components/CalendarView';
 import { EventForm } from '@/components/EventForm';
 import { nameFromEmail } from '@/lib/roster';
+import { isCircleMember } from '@/lib/circle';
 import {
   addDays,
   formatDateISO,
@@ -60,7 +61,7 @@ export default async function CalendarPage({ searchParams }: Props) {
 
   return (
     <>
-      <Header name={nameFromEmail(user?.email)} />
+      <Header name={nameFromEmail(user?.email)} isCircleMember={isCircleMember(user?.email)} />
 
       <main className="container-page py-12">
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">

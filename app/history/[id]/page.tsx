@@ -4,6 +4,7 @@ import { createClient } from '@/lib/supabase/server';
 import { Header } from '@/components/Header';
 import { HistoryPostDetail } from '@/components/HistoryPostDetail';
 import { nameFromEmail } from '@/lib/roster';
+import { isCircleMember } from '@/lib/circle';
 import type { GalleryPost, GalleryComment, Member } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -45,7 +46,7 @@ export default async function HistoryDetailPage({ params, searchParams }: Props)
 
   return (
     <>
-      <Header name={nameFromEmail(user?.email)} />
+      <Header name={nameFromEmail(user?.email)} isCircleMember={isCircleMember(user?.email)} />
 
       <main className="container-page py-10">
         <div className="mx-auto max-w-2xl">

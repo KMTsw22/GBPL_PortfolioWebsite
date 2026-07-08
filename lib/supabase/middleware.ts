@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { isAllowed } from '@/lib/allowlist';
 
 // 로그인이 필요한 경로 (수정/계정 관련). 그 외는 비로그인도 그냥 볼 수 있음.
-const PROTECTED_PATHS = ['/profile', '/account'];
+const PROTECTED_PATHS = ['/profile', '/account', '/private'];
 
 type CookieToSet = { name: string; value: string; options: CookieOptions };
 
