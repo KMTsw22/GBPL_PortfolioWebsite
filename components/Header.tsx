@@ -2,13 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { signOut } from '@/app/login/actions';
 
-export function Header({
-  name,
-  isCircleMember = false,
-}: {
-  name?: string | null;
-  isCircleMember?: boolean;
-}) {
+export function Header({ name }: { name?: string | null }) {
   const isLoggedIn = !!name;
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-canvas/80 backdrop-blur">
@@ -46,14 +40,12 @@ export function Header({
           >
             Calendar
           </Link>
-          {isCircleMember ? (
-            <Link
-              href="/private"
-              className="whitespace-nowrap rounded-md px-2 py-1.5 text-ink hover:bg-neutral-100 sm:px-3"
-            >
-              🔒 Private
-            </Link>
-          ) : null}
+          <Link
+            href="/private"
+            className="whitespace-nowrap rounded-md px-2 py-1.5 hover:bg-neutral-100 hover:text-ink sm:px-3"
+          >
+            Board
+          </Link>
           {isLoggedIn ? (
             <>
               <Link

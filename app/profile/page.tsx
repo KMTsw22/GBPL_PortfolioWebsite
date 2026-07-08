@@ -4,7 +4,6 @@ import { createClient } from '@/lib/supabase/server';
 import { Header } from '@/components/Header';
 import { ProfileEditor } from '@/components/ProfileEditor';
 import { nameFromEmail } from '@/lib/roster';
-import { isCircleMember } from '@/lib/circle';
 import type { Member } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -29,7 +28,7 @@ export default async function ProfilePage({ searchParams }: Props) {
 
   return (
     <>
-      <Header name={nameFromEmail(user.email)} isCircleMember={isCircleMember(user.email)} />
+      <Header name={nameFromEmail(user.email)} />
 
       <main className="container-page py-12">
         <div className="mx-auto max-w-2xl">

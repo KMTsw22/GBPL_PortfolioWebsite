@@ -3,7 +3,6 @@ import { Header } from '@/components/Header';
 import { HistoryUploader } from '@/components/HistoryUploader';
 import { HistoryPostCard } from '@/components/HistoryPostCard';
 import { nameFromEmail } from '@/lib/roster';
-import { isCircleMember } from '@/lib/circle';
 import type { GalleryPost, GalleryComment, Member } from '@/lib/types';
 
 export const dynamic = 'force-dynamic';
@@ -57,7 +56,7 @@ export default async function HistoryPage({ searchParams }: Props) {
 
   return (
     <>
-      <Header name={nameFromEmail(user?.email)} isCircleMember={isCircleMember(user?.email)} />
+      <Header name={nameFromEmail(user?.email)} />
 
       <main className="container-page py-12">
         <div className="mb-6 flex items-end justify-between gap-4">
