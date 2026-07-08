@@ -41,10 +41,10 @@ export function Header({ name }: { name?: string | null }) {
             Calendar
           </Link>
           <Link
-            href="/private"
+            href="/team"
             className="whitespace-nowrap rounded-md px-2 py-1.5 hover:bg-neutral-100 hover:text-ink sm:px-3"
           >
-            Board
+            Team
           </Link>
           {isLoggedIn ? (
             <>
