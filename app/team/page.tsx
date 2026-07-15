@@ -70,17 +70,17 @@ export default async function TeamPage() {
             <div className="rounded-xl border border-line bg-secondary/40 p-4">
               <h3 className="text-sm font-semibold text-ink">How it works</h3>
               <p className="mt-2 text-sm leading-6 text-ink-muted">
-                Students take program-based classes, study for 6 months through
-                a project-based curriculum, and then spend another 6 months in
-                an internship or an entry-level job.
+                Students study for 6 months through a project-based curriculum.
+                After that, they extend the J-1 visa for another 6 months to
+                complete an internship.
               </p>
             </div>
 
             <div className="rounded-xl border border-line bg-secondary/40 p-4">
               <h3 className="text-sm font-semibold text-ink">Next step</h3>
               <p className="mt-2 text-sm leading-6 text-ink-muted">
-                After the first year, participants may extend the J-1 visa for
-                an additional 6 months.
+                The program is designed to help students move from study into
+                practical internship experience in the U.S.
               </p>
             </div>
           </div>
