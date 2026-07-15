@@ -59,17 +59,6 @@ export default async function TeamPage() {
             through an internship or an entry-level job. After that, they can
             extend the J-1 visa for another 6 months.
           </p>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            {TEAM_NAMES.map((name) => (
-              <span
-                key={name}
-                className="rounded-full border border-line bg-secondary px-3 py-1 text-sm text-ink"
-              >
-                {name}
-              </span>
-            ))}
-          </div>
         </section>
 
         {members.length === 0 ? (
