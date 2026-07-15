@@ -11,7 +11,7 @@ export const dynamic = 'force-dynamic';
 const TEAM_EMAILS = [
   'mintae3827@kookmin.ac.kr',
   'chanjoongx@gmail.com',
-  'junwon020124@gmail.com',
+  'iamlyg9667@gmail.com',
   'botw461@gmail.com',
 ].map((e) => e.toLowerCase());
 
@@ -40,7 +40,7 @@ export default async function TeamPage() {
         <div className="mb-8">
           <h1 className="text-2xl font-semibold tracking-tight">Team</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            김민태 · 김찬중 · 배준원 · 박유나
+            김민태 · 김찬중 · 이영욱 · 박유나
           </p>
         </div>
 
