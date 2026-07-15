@@ -13,7 +13,12 @@ const TEAM_EMAILS = [
   'botw461@gmail.com',
 ].map((e) => e.toLowerCase());
 
-const TEAM_NAMES = ['김민태', '박유나', '이영욱', '김찬중'];
+const TEAM_NAMES = [
+  '\uae40\ubbfc\ud0dc',
+  '\ubc15\uc720\ub098',
+  '\uc774\uc601\uc6b1',
+  '\uae40\ucc2c\uc911',
+];
 
 export default async function TeamPage() {
   const supabase = await createClient();
@@ -52,13 +57,49 @@ export default async function TeamPage() {
           <h2 className="mt-2 text-xl font-semibold tracking-tight">
             Kookmin University PBL in Irvine
           </h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-ink-muted">
-            Kookmin University PBL is a J-1 visa program in Irvine where
-            students learn through program-based classes, spend 6 months on a
-            project-based curriculum, and then continue with 6 more months
-            through an internship or an entry-level job. After that, they can
-            extend the J-1 visa for another 6 months.
-          </p>
+
+          <div className="mt-5 grid gap-4 md:grid-cols-3">
+            <div className="rounded-xl border border-line bg-secondary/40 p-4">
+              <h3 className="text-sm font-semibold text-ink">What it is</h3>
+              <p className="mt-2 text-sm leading-6 text-ink-muted">
+                A J-1 visa program in Irvine focused on practical learning and
+                career preparation.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-line bg-secondary/40 p-4">
+              <h3 className="text-sm font-semibold text-ink">How it works</h3>
+              <p className="mt-2 text-sm leading-6 text-ink-muted">
+                Students take program-based classes, study for 6 months through
+                a project-based curriculum, and then spend another 6 months in
+                an internship or an entry-level job.
+              </p>
+            </div>
+
+            <div className="rounded-xl border border-line bg-secondary/40 p-4">
+              <h3 className="text-sm font-semibold text-ink">Next step</h3>
+              <p className="mt-2 text-sm leading-6 text-ink-muted">
+                After the first year, participants may extend the J-1 visa for
+                an additional 6 months.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-5">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-muted">
+              Team Members
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {TEAM_NAMES.map((name) => (
+                <span
+                  key={name}
+                  className="rounded-full border border-line bg-white px-3 py-1 text-sm text-ink"
+                >
+                  {name}
+                </span>
+              ))}
+            </div>
+          </div>
         </section>
 
         {members.length === 0 ? (
